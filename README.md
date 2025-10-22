@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PathFinder GI
 
-## Getting Started
+Este es el proyecto frontend para **PathFinder GI**, construido con [Next.js](https://nextjs.org).
 
-First, run the development server:
+El proyecto está configurado como una **Progressive Web App (PWA)** usando `next-pwa` para permitir la instalación en dispositivos.
+
+---
+
+## 1. Instalación
+
+Primero, clona el repositorio e instala todas las dependencias del proyecto:
+
+```bash
+npm install
+````
+
+---
+
+## 2. Cómo correr el proyecto
+
+Este proyecto tiene dos modos de ejecución.
+
+### A. Modo de Desarrollo (Para codificar)
+
+Usa este comando para el trabajo diario, construir componentes y ver cambios en vivo.
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**IMPORTANTE:** En este modo, las funciones de PWA (como el service worker, el caché y el botón de "Instalar") están **deshabilitadas** a propósito para agilizar el desarrollo. No intentes probar la PWA en este modo.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### B. Modo de Producción Local (Para probar la PWA)
 
-## Learn More
+Para probar que la PWA funciona (ver el botón de "Instalar", probar el caché, etc.), **debes** seguir estos dos pasos:
 
-To learn more about Next.js, take a look at the following resources:
+**Paso 1: Compilar el proyecto**
+Este comando genera la versión optimizada de producción y crea los archivos del service worker (`sw.js`).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Paso 2: Iniciar el servidor de producción**
+Este comando corre la aplicación que acabas de compilar.
 
-## Deploy on Vercel
+```bash
+npm start
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Ahora, abre [http://localhost:3000](http://localhost:3000).
