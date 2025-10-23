@@ -1,0 +1,21 @@
+.navbar {
+    background: rgb(var(--color-surface));
+    border-bottom: var(--border-subtle);
+    box-shadow: var(--shadow-sm);
+    padding-block: var(--space-3);
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+}
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+}
