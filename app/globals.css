@@ -1,0 +1,16 @@
+/* Importa tus bases de estilos */
+@import url('../styles/foundations.css');
+@import url('../styles/typography.css');
+@import url('../styles/helpers.css');
+
+html, body {
+    min-height: 100%;
+}
+
+/* Utilidades mínimas adicionales para layout responsivo de secciones */
+.section {
+    padding-block: var(--space-10);
+}
+.section-sm {
+    padding-block: var(--space-6);
+}
