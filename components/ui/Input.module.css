@@ -1,0 +1,43 @@
+.field { display: grid; gap: 6px; }
+.fullWidth { width: 100%; }
+
+.label { font-weight: var(--fw-medium); }
+.required { color: rgb(var(--error)); margin-left: 4px; }
+
+.control {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    border: var(--border);
+    border-radius: var(--radius-input);
+    background: rgb(var(--color-surface));
+    color: rgb(var(--color-on-surface));
+    padding-inline: 12px;
+    min-height: 44px;
+    transition: box-shadow var(--duration-std) var(--ease-standard), border-color var(--duration-std) var(--ease-standard);
+}
+
+.input {
+    border: none;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    padding: 10px 8px;
+    width: 100%;
+}
+
+.leftIcon, .rightAction { display: inline-flex; align-items: center; color: rgb(var(--color-outline)); }
+
+.control:has(input:focus-visible) {
+    box-shadow: 0 0 0 3px rgb(var(--focus-ring) / .3);
+    border-color: rgb(var(--color-primary));
+}
+
+.hasError {
+    border-color: rgb(var(--error));
+}
+
+.helper { font-size: var(--fs-caption); color: rgb(var(--color-outline)); }
+.error  { font-size: var(--fs-caption); color: rgb(var(--error)); }

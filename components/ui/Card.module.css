@@ -1,0 +1,15 @@
+.card {
+    background: rgb(var(--color-surface));
+    color: rgb(var(--color-on-surface));
+    border-radius: var(--radius-card);
+}
+
+.elevated { box-shadow: var(--shadow-md); border: var(--border-subtle); }
+.outlined { border: var(--divider); }
+.flat { border: var(--border-subtle); }
+
+.sm { padding: var(--space-4); }
+.md { padding: var(--space-6); }
+.lg { padding: var(--space-8); }
+
+.header { margin-bottom: var(--space-3); }
