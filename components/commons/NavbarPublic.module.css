@@ -14,8 +14,13 @@
     align-items: center;
 }
 
+.logoWrapper {
+    position: relative;
+    width: clamp(120px, 30vw, 200px); 
+    height: auto;
+    aspect-ratio: 5 / 1; 
+}
+
 .logo {
-    height: 40px;
-    width: auto;
     object-fit: contain;
 }

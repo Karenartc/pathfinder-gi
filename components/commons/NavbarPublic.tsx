@@ -3,21 +3,22 @@
 import React from 'react';
 import Image from 'next/image';
 import styles from './NavbarPublic.module.css';
-import logo from '../../public/images/PathFinder-Logo.png'; 
 
 export default function NavbarPublic() {
     return (
         <header className={styles.navbar}>
-            <div className={styles.wrapper}>
+      <div className={styles.wrapper}>
+        <div className={styles.logoWrapper}>
             <Image
                 src="/images/PathFinder-Logo.png"
                 alt="PathFinder"
-                className={styles.logo}
+                fill
                 priority
-                width={200}
-                height={40}
+                className={styles.logo}
+                sizes="(max-width: 768px) 160px, 200px" // 👈 adapta según viewport
             />
-            </div>
-        </header>
+        </div>
+      </div>
+    </header>
     );
 }
