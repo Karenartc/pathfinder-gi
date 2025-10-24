@@ -6,7 +6,14 @@
     flex-direction: column;
     align-items: center;          
     text-align: center;         
-    justify-content: center;     
+    justify-content: center;   
+    transition: transform var(--duration-std) var(--ease-standard),
+                box-shadow var(--duration-std) var(--ease-standard); 
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
 }
 
 .elevated {
