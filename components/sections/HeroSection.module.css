@@ -1,5 +1,5 @@
 .hero {
-    background: rgb(var(--color-primary-container));
+    background: rgb(var(--color-secondary-container));
     padding-block: var(--space-10);
 }
 
