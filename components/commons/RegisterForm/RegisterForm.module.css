@@ -1,0 +1,49 @@
+.form {
+    display: grid;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+}
+
+.nameRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+@media (max-width: 768px) {
+    .nameRow {
+        grid-template-columns: 1fr;
+    }
+}
+
+.login {
+    text-align: center;
+    font-size: var(--fs-body-s);
+    margin-top: var(--space-4);
+}
+
+.login a {
+    color: rgb(var(--color-primary));
+    font-weight: var(--fw-medium);
+    text-decoration: none;
+}
+
+.login a:hover {
+    text-decoration: underline;
+}
+
+.iconButton {
+    background: none;
+    border: none;
+    color: rgb(var(--color-outline));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.iconButton:hover {
+    color: rgb(var(--color-on-surface));
+}
