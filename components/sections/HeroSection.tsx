@@ -5,6 +5,7 @@ import styles from './HeroSection.module.css';
 import Image from 'next/image';
 import PathFox from '../../public/images/PathFox-Emocionado.png'; 
 import Button from '@/components/ui/Button';
+import { ROUTES } from '@/libs/routes';
 
 export default function HeroSection() {
     return (
@@ -15,8 +16,8 @@ export default function HeroSection() {
                     <h1 className="display">Tu Sede. Tu Carrera. Tu Éxito. En un solo lugar</h1>
 
                     <div className={styles.buttons}>
-                    <Button href="/register" variant="primary">¡Empezar a Explorar!</Button>
-                    <Button href="/login" variant="outline">Ya tengo una cuenta</Button>
+                    <Button href={ROUTES.register} variant="primary">¡Empezar a Explorar!</Button>
+                    <Button href={ROUTES.login} variant="outline">Ya tengo una cuenta</Button>
                     </div>
                 </div>
 
