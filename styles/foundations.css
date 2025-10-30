@@ -1,0 +1,209 @@
+/* Reset mínimo y configuración de tema */
+* { box-sizing: border-box; }
+html { color-scheme: light; }
+.dark { color-scheme: dark; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+/* Modo claro */
+:root {
+    /* colores marca y estados */
+    --color-primary: 99 86 143;             
+    --color-on-primary: 255 255 255;
+    --color-primary-container: 231 222 255;  
+    --color-on-primary-container: 31 20 72;
+
+    --color-secondary: 137 81 31;            
+    --color-on-secondary: 255 255 255;
+    --color-secondary-container: 255 220 196;
+    --color-on-secondary-container: 48 20 0;
+
+    --color-background: 253 252 255;        
+    --color-on-background: 28 27 31;
+    --color-surface: 253 252 255;
+    --color-on-surface: 28 27 31;
+
+    --color-outline: 121 116 126;
+    --color-outline-variant: 201 197 205;
+
+    --success: 0 128 96;      
+    --on-success: 255 255 255;
+    --warning: 194 120 0;      
+    --on-warning: 255 255 255;
+    --error: 186 26 26;        
+    --on-error: 255 255 255;
+    --info: 0 96 166;          
+    --on-info: 255 255 255;
+
+    
+    /* Iteracción y estado overlays */
+    --focus-ring: 99 86 143;                
+    --hover-overlay: 99 86 143 / 0.08;       
+    --pressed-overlay: 99 86 143 / 0.12;
+
+    --disabled-fg: 121 116 126;          
+    --disabled-fg-alpha: 0.5;
+    --disabled-bg: 201 197 205;
+    --disabled-bg-alpha: 0.25;
+    --disabled-border: 201 197 205;
+    --disabled-border-alpha: 0.35;
+
+
+    /* tipografía */
+    /* Definida vía next/font como variable: --font-inter */
+    --font-family-sans: var(--font-inter), system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+    /* Escala responsiva */
+    --fs-display: clamp(28px, 6vw, 40px);
+    --fs-h1: clamp(24px, 5vw, 32px);
+    --fs-h2: clamp(20px, 3.5vw, 28px);
+    --fs-h3: clamp(18px, 3vw, 24px);
+    --fs-subtitle: clamp(16px, 2.5vw, 20px);
+    --fs-body-l: 18px;
+    --fs-body: 16px;
+    --fs-body-s: 14px;
+    --fs-caption: 12px;
+    --fs-overline: 11px;
+
+    --fw-bold: 700;
+    --fw-semibold: 600;
+    --fw-medium: 500;
+    --fw-regular: 400;
+
+    --lh-tight: 1.2;
+    --lh-body: 1.55;
+
+    /* espaciado */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+
+    /* radio */
+    --radius-xs: 6px;
+    --radius-sm: 10px;
+    --radius-md: 12px; 
+    --radius-lg: 16px;
+    --radius-full: 999px;
+    
+    --radius-input: var(--radius-md);
+    --radius-button: var(--radius-md);
+    --radius-card: var(--radius-md);
+    --radius-chip: var(--radius-full);
+
+
+    /* bordes */
+    --border: 1px solid rgb(var(--color-outline) / 0.35);
+    --border-subtle: 1px solid rgb(var(--color-outline) / 0.25);
+    --divider: 1px solid rgb(var(--color-outline-variant));
+
+
+    /* sombras y elevación */
+    --shadow-sm: 0 2px 6px rgba(0,0,0,.08);
+    --shadow-md: 0 8px 24px rgba(0,0,0,.12);
+    --shadow-lg: 0 20px 40px rgba(0,0,0,.16);
+    
+    --elevation-0: var(--shadow-sm);
+    --elevation-1: var(--shadow-md);
+    --elevation-2: var(--shadow-lg);
+    
+    /* --- Overlays & Scrims --- */
+    --scrim: 0 0 0 / 0.40;                  /* rgb(var(--scrim)) */
+    --glass-blur: 8px;
+
+
+    /* movimiento */
+    --duration-fast: 150ms;
+    --duration-std: 250ms;
+    --ease-standard: cubic-bezier(.2, .0, .0, 1);
+
+    /* breakpoints- */
+    --bp-sm: 480px;
+    --bp-md: 768px;
+    --bp-lg: 1024px;
+    --bp-xl: 1280px;
+
+    --container-max: 1120px;
+    --container-pad: 16px;      
+    --container-pad-md: 24px;   
+
+    /* escala z-index */
+    --z-base: 0;
+    --z-dropdown: 1000;
+    --z-sticky: 1100;
+    --z-modal: 1200;
+    --z-toast: 1300;
+    
+    /* Links */
+    --link: var(--color-primary);
+    --link-hover-darken: 0.92;
+
+    /* Skeletons */
+    --skeleton-base: var(--color-outline-variant);
+    --skeleton-shine-light: 255 255 255 / 0.6;
+    --skeleton-shine-dark: 255 255 255 / 0.08;
+
+    /* Map controls */
+    --map-control-bg: var(--color-surface);
+    --map-control-fg: var(--color-on-surface);
+    --map-control-border: var(--color-outline);
+
+    /* Branding */
+    --brand-illustration-size-sm: 120px;
+    --brand-illustration-size-md: 200px;
+    --brand-illustration-size-lg: 320px;
+}
+
+/* modo oscuro */
+.dark {
+    --color-primary: 201 190 255;
+    --color-on-primary: 52 40 94;
+    --color-primary-container: 75 63 118;
+    --color-on-primary-container: 231 222 255;
+
+    --color-secondary: 255 184 128;
+    --color-on-secondary: 78 37 0;
+    --color-secondary-container: 109 59 7;
+    --color-on-secondary-container: 255 220 196;
+
+    --color-background: 28 27 31;
+    --color-on-background: 230 225 229;
+    --color-surface: 38 37 42;
+    --color-on-surface: 230 225 229;
+
+    --color-outline: 147 143 153;
+    --color-outline-variant: 73 69 79;
+
+    /* Overlays y sombras */
+    --hover-overlay: 201 190 255 / 0.08;
+    --pressed-overlay: 201 190 255 / 0.12;
+    --shadow-md: 0 8px 24px rgba(0,0,0,.35);
+}
+
+body {
+    font-family: var(--font-family-sans);
+    background: rgb(var(--color-background));
+    color: rgb(var(--color-on-background));
+}
+
+/* Accesibilidad: foco estándar consistente */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid rgb(var(--focus-ring));
+    outline-offset: 2px;
+}
+
+/* Estados deshabilitados */
+.is-disabled {
+    color: rgb(var(--disabled-fg) / var(--disabled-fg-alpha));
+    background: rgb(var(--disabled-bg) / var(--disabled-bg-alpha));
+    border-color: rgb(var(--disabled-border) / var(--disabled-border-alpha));
+    cursor: not-allowed;
+}

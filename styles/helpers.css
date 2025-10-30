@@ -1,0 +1,36 @@
+/* Layout */
+.container {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: var(--container-pad);
+}
+@media (min-width: 768px) {
+    .container { padding-inline: var(--container-pad-md); }
+}
+
+/* Surface & borders */
+.surface { background: rgb(var(--color-surface)); color: rgb(var(--color-on-surface)); }
+.border { border: var(--border); }
+.border-subtle { border: var(--border-subtle); }
+.divider { height: 1px; background: rgb(var(--color-outline-variant)); }
+
+/* Shadows & radius */
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.rounded { border-radius: var(--radius-card); }
+.rounded-full { border-radius: var(--radius-full); }
+
+/* Spacing (solo lo básico) */
+.mt-4 { margin-top: var(--space-4); }
+.mt-6 { margin-top: var(--space-6); }
+.p-4 { padding: var(--space-4); }
+.p-6 { padding: var(--space-6); }
+
+/* Texto por color */
+.text-primary { color: rgb(var(--color-primary)); }
+.text-muted { color: rgb(var(--color-outline)); }
+
+/* Divider helper */
+.divider { height: 1px; background: rgb(var(--color-outline-variant)); }
