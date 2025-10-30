@@ -1,0 +1,26 @@
+.navbar {
+    background: rgb(var(--color-surface));
+    border-bottom: var(--border-subtle);
+    box-shadow: var(--shadow-sm);
+    padding-block: var(--space-3);
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+}
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logoWrapper {
+    position: relative;
+    width: clamp(120px, 30vw, 200px); 
+    height: auto;
+    aspect-ratio: 5 / 1; 
+}
+
+.logo {
+    object-fit: contain;
+}

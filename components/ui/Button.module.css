@@ -1,7 +1,10 @@
 .btn {
-    --bg: rgb(var(--color-primary));
+    --bg: linear-gradient(180deg,
+        rgb(var(--color-primary)) 0%,
+        rgb(var(--color-primary-container)) 100%);
     --fg: rgb(var(--color-on-primary));
     --bd: transparent;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 
     position: relative;
     display: inline-flex;
@@ -16,17 +19,25 @@
     line-height: 1;
     text-decoration: none;
     cursor: pointer;
-    transition: background var(--duration-std) var(--ease-standard),
-                color var(--duration-std) var(--ease-standard),
-                filter var(--duration-std) var(--ease-standard),
-                box-shadow var(--duration-std) var(--ease-standard),
-                border-color var(--duration-std) var(--ease-standard);
     border-radius: var(--radius-button);
     user-select: none;
+    transition: transform var(--duration-fast) var(--ease-standard),
+            box-shadow var(--duration-fast) var(--ease-standard),
+            background-color var(--duration-fast) var(--ease-standard),
+            filter var(--duration-fast) var(--ease-standard);
 }
 
-.btn:hover { filter: brightness(var(--link-hover-darken)); }
-.btn:focus-visible { outline: 2px solid rgb(var(--focus-ring)); outline-offset: 2px; }
+.btn:hover:not(.is-disabled) {
+    filter: brightness(1.05);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+    text-decoration: none;
+}
+
+.btn:active:not(.is-disabled) {
+    transform: translateY(0);
+    box-shadow: none;
+}
 
 .fullWidth { width: 100%; }
 
@@ -68,3 +79,5 @@
     transform-origin: 12px 12px; animation: spin 1s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+
