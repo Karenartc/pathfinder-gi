@@ -1,0 +1,86 @@
+.form {
+    display: grid;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+}
+
+.actions {
+    text-align: right;
+}
+
+.forgot {
+    font-size: var(--fs-body-s);
+    color: rgb(var(--color-primary));
+    text-decoration: none;
+}
+
+.forgot:hover {
+    text-decoration: underline;
+}
+
+.register {
+    text-align: center;
+    font-size: var(--fs-body-s);
+    margin-top: var(--space-4);
+}
+
+.register a {
+    color: rgb(var(--color-primary));
+    font-weight: var(--fw-medium);
+    text-decoration: none;
+}
+
+.register a:hover {
+    text-decoration: underline;
+}
+
+/* Layout general del login */
+.loginGrid {
+    display: grid;
+    gap: var(--space-10);
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+}
+
+.loginIllustration {
+    display: flex;
+    justify-content: center;
+}
+
+.loginContent {
+    max-width: 400px;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .loginGrid {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .loginIllustration {
+        order: -1;
+        margin-bottom: var(--space-6);
+    }
+
+    .loginContent {
+        margin-inline: auto;
+    }
+}
+
+.iconButton {
+    background: none;
+    border: none;
+    color: rgb(var(--color-outline));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.iconButton:hover {
+    color: rgb(var(--color-on-surface));
+}
+

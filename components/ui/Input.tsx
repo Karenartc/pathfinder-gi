@@ -5,7 +5,6 @@ import styles from './Input.module.css';
 import clsx from 'clsx';
 
 export type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
-    label?: string;
     helperText?: string;
     error?: string;
     leftIcon?: React.ReactNode;
@@ -15,7 +14,6 @@ export type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
 
 export default function Input({
     id,
-    label,
     helperText,
     error,
     leftIcon,
@@ -30,12 +28,6 @@ export default function Input({
 
     return (
         <div className={clsx(styles.field, fullWidth && styles.fullWidth, className)}>
-        {label && (
-            <label className={styles.label} htmlFor={inputId}>
-            {label}
-            {rest.required && <span className={styles.required} aria-hidden>*</span>}
-            </label>
-        )}
 
         <div className={clsx(styles.control, error && styles.hasError, rest.disabled && 'is-disabled')}>
             {leftIcon && <span className={styles.leftIcon}>{leftIcon}</span>}
