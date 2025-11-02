@@ -65,7 +65,7 @@ export default function LoginForm() {
             </a>
         </div>
 
-        <Button type="submit" variant="primary" fullWidth>
+        <Button href={ROUTES.userhome} type="submit" variant="primary" fullWidth>
             Iniciar sesión
         </Button>
 

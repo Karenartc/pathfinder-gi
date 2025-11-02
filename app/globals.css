@@ -8,9 +8,6 @@ html, body {
 }
 
 /* Utilidades mínimas adicionales para layout responsivo de secciones */
-.section {
-    padding-block: var(--space-10);
-}
 .section-sm {
     padding-block: var(--space-6);
 }
