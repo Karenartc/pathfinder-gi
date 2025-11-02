@@ -5,7 +5,7 @@ import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { ROUTES } from '@/libs/routes';
 import Link from 'next/link';
-import { Eye, EyeOff } from 'lucide-react'; // 👈 Importamos los íconos
+import { Eye, EyeOff } from 'lucide-react'; 
 import styles from './RegisterForm.module.css';
 
 export default function RegisterForm() {
@@ -144,7 +144,7 @@ export default function RegisterForm() {
             required
         />
 
-        <Button type="submit" variant="primary" fullWidth>
+        <Button href={ROUTES.userhome}type="submit" variant="primary" fullWidth>
             Crear cuenta
         </Button>
 
