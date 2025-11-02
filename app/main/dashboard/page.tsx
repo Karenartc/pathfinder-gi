@@ -15,9 +15,9 @@ export default async function DashboardPage() {
     ]);
 
     return (
-    <>
-       {/* Header de bienvenida */}
-        <section className={`${styles.fullBleed} section`}>
+        <>
+        {/* Header de bienvenida */}
+        <section className={`${styles.fullBleed}`}>
             <div className="container">
             <HeaderWelcome
                 user={user}
@@ -26,17 +26,15 @@ export default async function DashboardPage() {
             </div>
         </section>
 
-      {/* El resto vuelve al layout centrado */}
+        {/* Contenido principal */}
         <main className="container">
-            {/* Mis cursos */}
-            <section className="section">
-            <h2>Mis Cursos</h2>
+            <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>Mis Cursos</h2>
             <CoursesSection courses={courses} />
             </section>
 
-            {/* Eventos próximos */}
-            <section className="section">
-            <h2>Eventos</h2>
+            <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>Eventos</h2>
             <EventsSection events={events} />
             </section>
         </main>

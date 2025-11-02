@@ -1,6 +1,16 @@
-/* components/dashboard/dashboard.module.css */
+.section {
+    margin-block: var(--space-10);
+}
 
-.headerSection { padding-top: var(--space-6); }
+.section:first-of-type {
+    margin-top: var(--space-8);
+}
+
+.sectionTitle {
+    margin-bottom: var(--space-4);
+    font-size: clamp(1.25rem, 3vw, var(--fs-h2));
+    font-weight: var(--fw-bold);
+}
 
 /* ——— Header de bienvenida ——— */
 
@@ -378,4 +388,8 @@
         width: 14px;
         height: 14px;
     }
+}
+
+main.container > :last-child {
+  margin-bottom: var(--space-12);
 }
