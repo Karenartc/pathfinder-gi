@@ -1,4 +1,4 @@
-import type { User, Course, Event, Place } from "@/libs/types";
+import type { User, Course, Event, Place, CourseDetail  } from "@/libs/types";
 
 /* ────────────────────────────────────────────────
 USUARIO ACTUAL
@@ -77,24 +77,30 @@ export async function getCourses(): Promise<Course[]> {
     return [
         {
         id: "c1",
+        title: "Bienvenida",
+        progress: 100,
+        image: "/images/PathFox-estudiante.png", 
+        },
+        {
+        id: "c2",
         title: "Mi carrera",
         progress: 90,
         image: "/images/PathFox-estudiante.png",
         },
         {
-        id: "c2",
+        id: "c3",
         title: "Mi sede",
         progress: 48,
         image: "/images/PathFox-mapa.png",
         },
         {
-        id: "c3",
+        id: "c4",
         title: "Mi DAE",
         progress: 0,
         image: "/images/PathFox-PoleraRoja.png",
         },
         {
-        id: "c4",
+        id: "c5",
         title: "Mi Prueba",
         progress: 0,
         image: "/images/PathFox-Camino.png",
@@ -166,4 +172,70 @@ DETALLE DEL LUGAR (buscar por ID)
 export async function getPlaceById(id: string): Promise<Place | undefined> {
     const places = await getPlaces();
     return places.find((p) => p.id === id);
+}
+
+/* ────────────────────────────────────────────────
+Mock data para los cursos
+──────────────────────────────────────────────── */
+export async function getCoursesDetail(): Promise<CourseDetail[]> {
+    return [
+        {
+        id: "c1",
+        title: "Bienvenida",
+        progress: 100,
+        image: "/images/PathFox-estudiante.png", 
+        lessons: [
+            { id: "01", title: "¿Dónde estamos?", description: "texto", completed: true },
+            { id: "02", title: "¿Qué hacemos?", description: "Texto", completed: true },
+            { id: "03", title: "¿QPor qué lo hacemos?", description: "Texto.", completed: true },
+        ],
+        },
+        {
+        id: "c2",
+        title: "Mi carrera",
+        progress: 90,
+        image: "/images/PathFox-estudiante.png", 
+        lessons: [
+            { id: "l1", title: "¿Qué ramas tiene la Ingeniería Informática?", description: "Especialidades, campo y futuro.", completed: true },
+            { id: "l2", title: "¿Qué se espera de mí en esta disciplina?", description: "Rol, competencias y mentalidad clave.", completed: true },
+            { id: "l3", title: "¿Qué materias tendré este semestre?", description: "Plan de estudios actual.", completed: true },
+            { id: "l4", title: "¿Qué herramientas y lenguajes aprenderé?", description: "Primeros pasos en la programación.", completed: true },
+            { id: "l5", title: "¿Quiénes son mis jefes de carrera y coordinadores?", description: "Líderes académicos y contactos clave.", completed: true },
+            { id: "l6", title: "¿Qué laboratorios debo conocer en el campus?", description: "Espacios físicos para la práctica.", completed: false },
+        ],
+        },
+        {
+        id: "c3",
+        title: "Mi sede",
+        image: "/images/PathFox-mapa.png",
+        progress: 48,
+        lessons: [
+            { id: "l1", title: "¿Dónde están los principales servicios estudiantiles?", description: "DAE, biblioteca, laboratorios, etc.", completed: true },
+            { id: "l2", title: "¿Cómo puedo reservar salas?", description: "Sistema de reservas y normas de uso.", completed: false },
+        ],
+        },
+        {
+        id: "c4",
+        title: "Mi DAE",
+        progress: 0,
+        image: "/images/PathFox-PoleraRoja.png",
+        lessons: [
+            { id: "l1", title: "¿Qué servicios ofrece el DAE?", description: "Acompañamiento, becas, bienestar.", completed: false },
+        ],
+        },
+        {
+        id: "c5",
+        title: "Mi Prueba",
+        progress: 0,
+        image: "/images/PathFox-Camino.png",
+        lessons: [
+            { id: "l1", title: "¿Cómo hacer las pruebas?", description: "Texto", completed: false },
+        ],
+        },
+    ];
+}
+
+export async function getCourseById(id: string): Promise<CourseDetail | undefined> {
+    const courses = await getCoursesDetail();
+    return courses.find((c) => c.id === id);
 }
