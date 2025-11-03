@@ -45,3 +45,13 @@ export type Achievement = {
     iconUrl: string;
     category?: string;  // Ej: "Exploración", "Social", etc.
 };
+
+export type Place = {
+    id: string;
+    name: string;
+    location: string;
+    hours: string;
+    description: string;
+    image: string;
+};
+

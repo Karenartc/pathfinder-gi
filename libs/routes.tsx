@@ -10,4 +10,8 @@ export const ROUTES = {
     pathbot: '/main/pathbot',
     ranking: '/main/ranking',
     profile: '/main/profile',
+    details: {
+        event: (id: string) => `/main/details/event/${id}`,
+        place: (id: string) => `/main/details/place/${id}`,
+    },
 };
