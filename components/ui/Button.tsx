@@ -71,8 +71,8 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
             <a
             ref={ref as React.Ref<HTMLAnchorElement>}
             className={classes}
-            aria-busy={loading || undefined}
-            aria-disabled={isDisabled || undefined}
+            {...(loading && { 'aria-busy': true })} // Cambio para solucionar un error.
+            {...(isDisabled && { 'aria-disabled': true })} // Cambio para solucionar un error.
             {...(rest as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
             href={isDisabled ? undefined : href}
             onClick={(e) => {
@@ -90,7 +90,7 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
             ref={ref as React.Ref<HTMLButtonElement>}
             className={classes}
             disabled={isDisabled}
-            aria-busy={loading || undefined}
+            {...(loading && { 'aria-busy': true })} // Cambio para solucionar un error.
             {...(rest as React.ButtonHTMLAttributes<HTMLButtonElement>)}
         >
             {content}
