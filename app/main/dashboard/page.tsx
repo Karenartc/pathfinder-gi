@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { getUser, getCourses, getEvents } from "@/libs/data/mock"; 
+import { getUser, getCourses, getEvents, getCoursesDetail } from "@/libs/data/mock"; 
 import HeaderWelcome from "@/components/dashboard/HeaderWelcome";
 import CoursesSection from "@/components/dashboard/CoursesSection";
 import EventsSection from "@/components/dashboard/EventsSection";
@@ -10,7 +10,7 @@ export const revalidate = 0;
 export default async function DashboardPage() {
     const [user, courses, events] = await Promise.all([
         getUser(),
-        getCourses(),
+        getCoursesDetail(),
         getEvents(),
     ]);
 

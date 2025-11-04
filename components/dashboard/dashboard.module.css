@@ -393,5 +393,22 @@
 }
 
 main.container > :last-child {
-  margin-bottom: var(--space-12);
+    margin-bottom: var(--space-12);
+}
+
+/* Elimina subrayado en hover o focus */
+.coursesWrapper a,
+.coursesWrapper a:hover,
+.coursesWrapper a:focus,
+.coursesWrapper a:active,
+.coursesWrapper a:visited {
+    text-decoration: none !important;
+    outline: none !important;
+}
+
+.noCoursesMsg {
+    text-align: center;
+    color: rgb(var(--color-outline));
+    font-size: var(--fs-body-l);
+    padding: var(--space-6);
 }
