@@ -141,24 +141,77 @@ export async function getPlaces(): Promise<Place[]> {
     return [
         {
         id: "p1",
-        name: "La Biblioteca",
-        location: "Primer Piso",
-        hours: "Lunes a Viernes, 09:00 a 21:00",
+        name: "Biblioteca Central",
         description:
-            "La Biblioteca es tu recurso académico más valioso en el campus. Más que solo libros, es el espacio ideal para la investigación, el estudio colaborativo y la concentración profunda.",
+            "Espacio de estudio y recursos académicos. Ideal para investigación y trabajo colaborativo.",
         image: "/images/biblioteca-lugar.jpeg",
+        location: "Primer piso",
+        building: "Edificio A",
+        room: "A-101",
+        hours: "Lunes a Viernes, 09:00 a 21:00",
+        qrCodeUrl: "https://pathfinder-app.com/qr/p1"
         },
         {
         id: "p2",
         name: "Centro DAE",
-        location: "Edificio Central, Segundo Piso",
-        hours: "Lunes a Viernes, 10:00 a 18:00",
         description:
-            "El Departamento de Asuntos Estudiantiles (DAE) te acompaña en tu desarrollo personal y bienestar. Aquí puedes informarte sobre becas, talleres y actividades extracurriculares.",
-        image: "images/biblioteca-lugar.jpeg",
+            "Oficina del Departamento de Asuntos Estudiantiles. Aquí puedes informarte sobre becas y actividades.",
+        image: "/images/dae-lugar.jpeg",
+        location: "Segundo piso, Edificio Central",
+        building: "Edificio B",
+        room: "B-204",
+        hours: "Lunes a Viernes, 10:00 a 18:00",
+        qrCodeUrl: "https://pathfinder-app.com/qr/p2"
         },
+        {
+        id: "p3",
+        name: "Casino",
+        description:
+            "Comedor principal del campus. Ofrece menú diario, snacks y bebidas.",
+        image: "/images/casino-lugar.jpeg",
+        location: "Primer piso, junto al patio central",
+        building: "Edificio C",
+        hours: "Lunes a Viernes, 08:00 a 17:00",
+        qrCodeUrl: "https://pathfinder-app.com/qr/p3"
+        },
+        {
+        id: "p4",
+        name: "Biblioteca Central",
+        description:
+            "Espacio de estudio y recursos académicos. Ideal para investigación y trabajo colaborativo.",
+        image: "/images/biblioteca-lugar.jpeg",
+        location: "Primer piso",
+        building: "Edificio A",
+        room: "A-101",
+        hours: "Lunes a Viernes, 09:00 a 21:00",
+        qrCodeUrl: "https://pathfinder-app.com/qr/p1"
+        },
+        {
+        id: "p5",
+        name: "Centro DAE",
+        description:
+            "Oficina del Departamento de Asuntos Estudiantiles. Aquí puedes informarte sobre becas y actividades.",
+        image: "/images/dae-lugar.jpeg",
+        location: "Segundo piso, Edificio Central",
+        building: "Edificio B",
+        room: "B-204",
+        hours: "Lunes a Viernes, 10:00 a 18:00",
+        qrCodeUrl: "https://pathfinder-app.com/qr/p2"
+        },
+        {
+        id: "p6",
+        name: "Casino",
+        description:
+            "Comedor principal del campus. Ofrece menú diario, snacks y bebidas.",
+        image: "/images/casino-lugar.jpeg",
+        location: "Primer piso, junto al patio central",
+        building: "Edificio C",
+        hours: "Lunes a Viernes, 08:00 a 17:00",
+        qrCodeUrl: "https://pathfinder-app.com/qr/p3"
+        }
     ];
 }
+
 
 /* ────────────────────────────────────────────────
 DETALLE DEL LUGAR (buscar por ID)

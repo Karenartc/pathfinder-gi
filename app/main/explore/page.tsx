@@ -1,16 +1,7 @@
-import Link from "next/link";
-import { ROUTES } from "@/libs/routes";
+import { getPlaces } from "@/libs/data";
+import ExploreSection from "@/components/explore/ExploreSection";
 
-export default function ExplorePage() {
-    return (
-        <main>
-        <h1>Explorar</h1>
-
-        <Link
-            href={ROUTES.details.place("p1")} 
-        >
-            Ver detalles de la Biblioteca
-        </Link>
-        </main>
-    );
+export default async function ExplorePage() {
+    const places = await getPlaces();
+    return <ExploreSection places={places} />;
 }

@@ -1,0 +1,190 @@
+.explore {
+    padding: var(--space-8);
+}
+
+/* ---------- HEADER ---------- */
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.header h2 {
+    font-size: clamp(1.1rem, 2.5vw, var(--fs-h3));
+    font-weight: var(--fw-semibold);
+    color: rgb(var(--color-on-surface));
+    opacity: 0.95;
+}
+
+
+/* ---------- SEARCH BAR ---------- */
+.searchBar {
+    display: flex;
+    align-items: center;
+    background: rgb(var(--color-surface)); 
+    border: 1px solid rgb(var(--color-outline-variant)); 
+    border-radius: var(--radius-lg);
+    padding: var(--space-3) var(--space-4);
+    box-shadow: var(--shadow-sm);
+    transition: border var(--duration-fast), box-shadow var(--duration-fast);
+}
+
+.searchBar:focus-within {
+    border-color: rgb(var(--color-secondary)); 
+    box-shadow: 0 0 0 2px rgba(var(--color-secondary), 0.2);
+    }
+
+.icon {
+    color: rgb(var(--color-outline-variant));
+    margin-right: var(--space-2);
+    flex-shrink: 0;
+}
+
+.searchBar input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: rgb(var(--color-on-surface));
+    font-size: var(--fs-body);
+    outline: none;
+    padding-block: var(--space-1);
+}
+
+.qrButton {
+    background: rgb(var(--color-secondary)); 
+    color: rgb(var(--color-on-secondary));
+    border: none;
+    cursor: pointer;
+    padding: var(--space-2);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: filter var(--duration-fast);
+}
+
+.qrButton:hover {
+    filter: brightness(var(--link-hover-darken)); /* efecto sutil de hover */
+}
+
+/* ---------- GRID DE CARDS ---------- */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-6);
+}
+
+/* ---------- CARD ---------- */
+.card {
+    display: flex;
+    flex-direction: column;
+    background: rgb(var(--color-surface));
+    color: rgb(var(--color-on-surface));
+    border: var(--border-subtle);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: transform var(--duration-std), box-shadow var(--duration-std);
+    text-decoration: none !important;
+}
+
+.card:hover,
+.card:focus,
+.card:active {
+    text-decoration: none !important;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* ---------- IMAGEN ---------- */
+.image {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    display: block;
+}
+
+/* ---------- CONTENIDO ---------- */
+.content {
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+}
+
+/* Título del lugar */
+.content h3 {
+    margin: 0 0 var(--space-3);
+    font-size: clamp(18px, 2.3vw, 22px); 
+    font-weight: var(--fw-semibold);
+    color: rgb(var(--color-on-surface));
+    text-decoration: none; 
+}
+
+/* Descripción breve */
+.desc {
+    color: rgb(var(--color-on-surface-variant));
+    font-size: var(--fs-body);
+    line-height: var(--lh-base);
+    margin-bottom: var(--space-4);
+}
+
+/* ---------- METADATOS ---------- */
+.meta {
+  list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-2);
+    font-size: var(--fs-body-s);
+    color: rgb(var(--color-outline));
+}
+
+.meta li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.meta svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: rgb(var(--color-outline-variant));
+    opacity: 0.9;
+}
+
+/* ---------- ESTADO VACÍO ---------- */
+.empty {
+    text-align: center;
+    color: rgb(var(--color-on-surface-variant));
+    margin-top: var(--space-10);
+    font-size: var(--fs-body);
+    opacity: 0.8;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 480px) {
+    .image {
+        height: 140px;
+    }
+
+    .content {
+        padding: var(--space-4);
+    }
+
+    .content h3 {
+        font-size: var(--fs-body-l);
+    }
+
+    .desc {
+        font-size: var(--fs-body-s);
+    }
+
+    .meta svg {
+        width: 14px;
+        height: 14px;
+    }
+}

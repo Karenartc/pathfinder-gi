@@ -49,9 +49,13 @@ export type Achievement = {
 export type Place = {
     id: string;
     name: string;
-    location: string;
-    hours: string;
     description: string;
     image: string;
+    location?: string;
+    hours?: string;
+    building?: string;
+    room?: string;
+    qrCodeUrl?: string;
 };
+
 
