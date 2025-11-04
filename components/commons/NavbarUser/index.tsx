@@ -7,13 +7,16 @@ import Link from 'next/link';
 import {Bell, Star, Menu, X, Home, BookOpen, Compass, MessageSquare, } from 'lucide-react';
 import styles from './NavbarUser.module.css';
 import { ROUTES } from '@/libs/routes';
-import { getUser } from '@/libs/data/mock';
+import { getUser, getNotifications } from '@/libs/data/mock';
+import NotificationsModal from "@/components/notifications/NotificationsModal";
 
 export default function NavbarUser() {
     const pathname = usePathname();
     const [menuOpen, setMenuOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [user, setUser] = useState<{ name: string; points: number } | null>(null);
+    const [notifOpen, setNotifOpen] = useState(false);
+    const [hasUnread, setHasUnread] = useState(false);
 
     // Detectar tamaño de pantalla
     useEffect(() => {
@@ -31,6 +34,15 @@ export default function NavbarUser() {
         }
         fetchUser();
     }, []);
+
+    useEffect(() => {
+        async function fetchNotifications() {
+            const data = await getNotifications();
+            setHasUnread(data.some((n) => !n.read));
+        }
+        fetchNotifications();
+        }, []);
+
 
     const navItems = [
         { label: 'Principal', href: ROUTES.userhome, icon: <Home size={18} /> },
@@ -74,9 +86,9 @@ export default function NavbarUser() {
 
 
             <div className={styles.right}>
-            <button className={styles.iconBtn} aria-label="Notificaciones">
+            <button className={`${styles.iconBtn} ${hasUnread ? styles.hasUnread : ''}`} aria-label="Notificaciones" onClick={() => setNotifOpen(true)}>
                 <Bell size={20} />
-                <span className={styles.bellDot}></span>
+                {hasUnread && <span className={styles.bellDot}></span>}
             </button>
 
             <div className={styles.divider}></div>
@@ -167,6 +179,11 @@ export default function NavbarUser() {
             </nav>
             </div>
         )}
+        <NotificationsModal
+            open={notifOpen}
+            onClose={() => setNotifOpen(false)}
+            onUpdateUnread={(hasUnread) => setHasUnread(hasUnread)}
+        />
         </header>
     );
 }

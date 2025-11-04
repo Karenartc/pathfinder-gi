@@ -58,4 +58,15 @@ export type Place = {
     qrCodeUrl?: string;
 };
 
+/* ────────────────────────────────────────────────
+Notificación
+──────────────────────────────────────────────── */
+export type Notification = {
+    id: string;
+    message: string;       
+    type: "lesson" | "event" | "qr" | "system"; 
+    dateISO: string;          
+    read: boolean;   
+    link?: string;             
+};
 

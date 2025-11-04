@@ -1,4 +1,4 @@
-import type { User, Course, Event, Place } from "@/libs/types";
+import type { User, Course, Event, Place, Notification } from "@/libs/types";
 
 /* ────────────────────────────────────────────────
 USUARIO ACTUAL
@@ -220,3 +220,101 @@ export async function getPlaceById(id: string): Promise<Place | undefined> {
     const places = await getPlaces();
     return places.find((p) => p.id === id);
 }
+
+
+/* ────────────────────────────────────────────────
+NOTIFICACIONES (mock local)
+──────────────────────────────────────────────── */
+export async function getNotifications(): Promise<Notification[]> {
+    return [
+        {
+        id: "n1",
+        message: "Has completado la lección 2 de 'Mi sede'",
+        type: "lesson",
+        dateISO: "2025-11-04T09:00:00Z",
+        read: false,
+        },
+        {
+        id: "n2",
+        message: "Nuevo evento: Feria de Bienvenida",
+        type: "event",
+        dateISO: "2025-11-03T16:00:00Z",
+        read: false,
+        link: "/main/details/event/e1", 
+        },
+        {
+        id: "n3",
+        message: "Escaneaste el QR del Centro DAE",
+        type: "qr",
+        dateISO: "2025-11-02T12:00:00Z",
+        read: false,
+        },
+        {
+        id: "n4",
+        message: "Has completado la lección 2 de 'Mi sede'",
+        type: "lesson",
+        dateISO: "2025-11-04T09:00:00Z",
+        read: false,
+        },
+        {
+        id: "n5",
+        message: "Nuevo evento: Feria de Bienvenida",
+        type: "event",
+        dateISO: "2025-11-03T16:00:00Z",
+        read: false,
+        link: "/main/details/event/e1", 
+        },
+        {
+        id: "n6",
+        message: "Escaneaste el QR del Centro DAE",
+        type: "qr",
+        dateISO: "2025-11-02T12:00:00Z",
+        read: false,
+        },
+        {
+        id: "n7",
+        message: "Has completado la lección 2 de 'Mi sede'",
+        type: "lesson",
+        dateISO: "2025-11-04T09:00:00Z",
+        read: false,
+        },
+        {
+        id: "n8",
+        message: "Nuevo evento: Feria de Bienvenida",
+        type: "event",
+        dateISO: "2025-11-03T16:00:00Z",
+        read: false,
+        link: "/main/details/event/e1", 
+        },
+        {
+        id: "n9",
+        message: "Escaneaste el QR del Centro DAE",
+        type: "qr",
+        dateISO: "2025-11-02T12:00:00Z",
+        read: false,
+        },
+        {
+        id: "n10",
+        message: "Has completado la lección 2 de 'Mi sede'",
+        type: "lesson",
+        dateISO: "2025-11-04T09:00:00Z",
+        read: true,
+        },
+        {
+        id: "n11",
+        message: "Nuevo evento: Feria de Bienvenida",
+        type: "event",
+        dateISO: "2025-11-03T16:00:00Z",
+        read: false,
+        link: "/main/details/event/e1", 
+        },
+        {
+        id: "n12",
+        message: "Escaneaste el QR del Centro DAE",
+        type: "qr",
+        dateISO: "2025-11-02T12:00:00Z",
+        read: false,
+        },
+    ];
+}
+

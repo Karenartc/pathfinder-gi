@@ -264,3 +264,31 @@
         width: 110px;
     }
 }
+
+.iconBtn {
+    position: relative;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgb(var(--color-on-surface-variant));
+    transition: color 0.2s;
+}
+.iconBtn:hover {
+    color: rgb(var(--color-primary));
+}
+
+/* indicador */
+.bellDot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    background: rgb(var(--color-error));
+    border-radius: var(--radius-full);
+}
+
+/* Icono activo */
+.hasUnread {
+    color: rgb(var(--color-primary)); 
+}
