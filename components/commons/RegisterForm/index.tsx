@@ -6,7 +6,7 @@ import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { ROUTES } from '@/libs/routes';
 import Link from 'next/link';
-import { Eye, EyeOff } from 'lucide-react'; // 👈 Importamos los íconos
+import { Eye, EyeOff } from 'lucide-react'; 
 import styles from './RegisterForm.module.css';
 
 export default function RegisterForm() {
@@ -97,8 +97,8 @@ export default function RegisterForm() {
             // Registro exitoso
             console.log('Registro exitoso:', data);
 
-            // Redirigir al login para que inicie sesión
-            router.push(ROUTES.login);
+            // Redirigir al home de usuario luego de registrarse
+            router.push(ROUTES.userhome);
             
         } catch (error) {
             // Manejar errores de conexión
