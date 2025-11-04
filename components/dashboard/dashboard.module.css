@@ -15,8 +15,8 @@
 /* ——— Header de bienvenida ——— */
 
 .fullBleed {
-    background: rgb(var(--color-primary-container));
-    color: rgb(var(--color-on-primary-container));
+    background: rgb(var(--color-secondary-container));
+    color: rgb(var(--color-on-secondary-container));
     padding-block: var(--space-10);
 }
 
@@ -255,7 +255,7 @@
 .progressFill {
     display: block;
     height: 100%;
-    background: rgb(var(--color-primary));
+    background: rgb(var(--color-secondary));
     border-radius: var(--radius-full);
     transition: width var(--duration-std) var(--ease-standard);
 }
@@ -313,6 +313,8 @@
 }
 
 .eventCard:hover {
+    cursor: pointer;
+    text-decoration: none; 
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }

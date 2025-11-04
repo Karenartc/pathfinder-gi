@@ -1,4 +1,4 @@
-import type { User, Course, Event } from "@/libs/types";
+import type { User, Course, Event, Place } from "@/libs/types";
 
 /* ────────────────────────────────────────────────
 USUARIO ACTUAL
@@ -113,7 +113,7 @@ export async function getEvents(): Promise<Event[]> {
         place: "Sede, Patio de atrás",
         dateISO: "2026-03-12",
         image: "/images/Bienevidos-Event.jpeg",
-        description: "Inicio del semestre con actividades de bienvenida y orientación para alumnos nuevos.",
+        description: "Inicio del semestre con actividades de bienvenida y orientación para alumnos nuevos. Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos. Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos. Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos. Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos. Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.",
         },
         {
         id: "e2",
@@ -121,31 +121,49 @@ export async function getEvents(): Promise<Event[]> {
         place: "Sede, Biblioteca",
         dateISO: "2026-03-11",
         image: "/images/biblioteca-lugar.jpeg",
-        description: "Encuentro organizado por DAE para dar la bienvenida a los estudiantes de primer año.",
+        description: "Encuentro organizado por DAE para dar la bienvenida a los estudiantes de primer año. Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos. Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos. Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos. Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos. Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.",
         },
     ];
 }
 
 /* ────────────────────────────────────────────────
-LOGROS (Achievements)
+DETALLE DE EVENTO (buscar por ID)
 ──────────────────────────────────────────────── */
-export async function getAchievements() {
+export async function getEventById(id: string): Promise<Event | undefined> {
+    const events = await getEvents();
+    return events.find((e) => e.id === id);
+}
+
+/* ────────────────────────────────────────────────
+LUGARES
+──────────────────────────────────────────────── */
+export async function getPlaces(): Promise<Place[]> {
     return [
         {
-        id: "a1",
-        name: "Explorador Nato",
-        description: "Por descubrir tu primer módulo en la app.",
-        pointsAwarded: 100,
-        iconUrl: "/images/PathFox-Premio.png",
-        category: "Exploración",
+        id: "p1",
+        name: "La Biblioteca",
+        location: "Primer Piso",
+        hours: "Lunes a Viernes, 09:00 a 21:00",
+        description:
+            "La Biblioteca es tu recurso académico más valioso en el campus. Más que solo libros, es el espacio ideal para la investigación, el estudio colaborativo y la concentración profunda.",
+        image: "/images/biblioteca-lugar.jpeg",
         },
         {
-        id: "a2",
-        name: "Compañerismo",
-        description: "Por participar en un evento DAE.",
-        pointsAwarded: 50,
-        iconUrl: "/images/PathFox-Camino.png",
-        category: "Social",
+        id: "p2",
+        name: "Centro DAE",
+        location: "Edificio Central, Segundo Piso",
+        hours: "Lunes a Viernes, 10:00 a 18:00",
+        description:
+            "El Departamento de Asuntos Estudiantiles (DAE) te acompaña en tu desarrollo personal y bienestar. Aquí puedes informarte sobre becas, talleres y actividades extracurriculares.",
+        image: "images/biblioteca-lugar.jpeg",
         },
     ];
+}
+
+/* ────────────────────────────────────────────────
+DETALLE DEL LUGAR (buscar por ID)
+──────────────────────────────────────────────── */
+export async function getPlaceById(id: string): Promise<Place | undefined> {
+    const places = await getPlaces();
+    return places.find((p) => p.id === id);
 }
