@@ -70,3 +70,19 @@ export type CourseDetail = {
     lessons: CourseLesson[];
 };
 
+export type LessonQuestion = {
+    id: string;
+    question: string;
+    options: string[];
+    correctIndex: number;
+};
+
+export type LessonDetail = {
+    id: string;
+    courseId: string;
+    title: string;
+    subtitle?: string;
+    image: string;
+    content: string[];
+    questions?: LessonQuestion[]; 
+};

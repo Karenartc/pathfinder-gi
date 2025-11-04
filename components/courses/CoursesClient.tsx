@@ -62,7 +62,11 @@ export default function CoursesClient({ courses }: { courses: CourseDetail[] }) 
             />
             <div className={styles.lessonList}>
               {activeCourse.lessons.map((lesson) => (
-                <CourseLesson key={lesson.id} lesson={lesson} />
+                <CourseLesson
+                  key={lesson.id}
+                  lesson={lesson}
+                  courseId={activeCourse.id} 
+                />
               ))}
             </div>
           </>

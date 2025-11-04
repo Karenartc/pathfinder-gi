@@ -1,4 +1,4 @@
-import type { User, Course, Event, Place, CourseDetail  } from "@/libs/types";
+import type { User, Course, Event, Place, CourseDetail, LessonDetail  } from "@/libs/types";
 
 /* ────────────────────────────────────────────────
 USUARIO ACTUAL
@@ -239,3 +239,192 @@ export async function getCourseById(id: string): Promise<CourseDetail | undefine
     const courses = await getCoursesDetail();
     return courses.find((c) => c.id === id);
 }
+
+/* ────────────────────────────────────────────────
+DETALLES DE LECCIONES (contenido completo)
+──────────────────────────────────────────────── */
+export async function getLessonDetails(): Promise<LessonDetail[]> {
+  return [
+    /* ───────────── Curso: Bienvenida ───────────── */
+    {
+      id: "01",
+      courseId: "c1",
+      title: "¿Dónde estamos?",
+      subtitle: "Conoce tu entorno académico y campus.",
+      image: "/images/PathFox-estudiante.png",
+      content: [
+        "Tu primer paso en la vida universitaria comienza con conocer tu sede: sus espacios, servicios y personas clave.",
+        "Aquí descubrirás dónde se ubican los laboratorios, biblioteca, DAE y otros lugares fundamentales.",
+      ],
+    },
+    {
+      id: "02",
+      courseId: "c1",
+      title: "¿Qué hacemos?",
+      subtitle: "Explora los objetivos de tu formación.",
+      image: "/images/PathFox-Camino.png",
+      content: [
+        "En tu carrera desarrollarás habilidades prácticas y teóricas que te prepararán para los desafíos del mundo laboral.",
+        "Cada módulo te permitirá avanzar en tu ruta personalizada dentro de PathFinder.",
+      ],
+    },
+    {
+      id: "03",
+      courseId: "c1",
+      title: "¿Por qué lo hacemos?",
+      subtitle: "El propósito de tu formación profesional.",
+      image: "/images/PathFox-Premio.png",
+      content: [
+        "Porque creemos que cada estudiante merece una experiencia significativa en su proceso educativo.",
+        "Tu desarrollo personal, técnico y humano es el centro de nuestro propósito.",
+      ],
+    },
+
+    /* ───────────── Curso: Mi carrera ───────────── */
+    {
+      id: "l1",
+      courseId: "c2",
+      title: "¿Qué ramas tiene la Ingeniería Informática?",
+      subtitle: "Especialidades, campo y futuro.",
+      image: "/images/PathFox-estudiante.png",
+      content: [
+        "La Ingeniería Informática abarca desde el desarrollo de software hasta la ciberseguridad y la inteligencia artificial.",
+        "Cada rama te permitirá aplicar la tecnología para resolver problemas reales de la sociedad.",
+      ],
+    },
+    {
+      id: "l2",
+      courseId: "c2",
+      title: "¿Qué se espera de mí en esta disciplina?",
+      subtitle: "Rol, competencias y mentalidad clave.",
+      image: "/images/PathFox-Camino.png",
+      content: [
+        "Se espera que desarrolles pensamiento lógico, creatividad, capacidad analítica y compromiso con la innovación.",
+        "Tu mentalidad curiosa y tu capacidad para resolver problemas serán tu mayor fortaleza.",
+      ],
+    },
+    {
+      id: "l3",
+      courseId: "c2",
+      title: "¿Qué materias tendré este semestre?",
+      subtitle: "Plan de estudios actual.",
+      image: "/images/PathFox-PoleraRoja.png",
+      content: [
+        "Durante el primer semestre cursarás asignaturas base como Programación, Matemáticas, Comunicación Efectiva y Tecnología de la Información.",
+        "Estas materias te darán las herramientas necesarias para avanzar con solidez en tu formación.",
+      ],
+    },
+    {
+      id: "l4",
+      courseId: "c2",
+      title: "¿Qué herramientas y lenguajes aprenderé?",
+      subtitle: "Primeros pasos en la programación.",
+      image: "/images/PathFox-Camino.png",
+      content: [
+        "Aprenderás lenguajes como Python y JavaScript, junto con herramientas de desarrollo colaborativo como Git y Visual Studio Code.",
+        "Estas bases te prepararán para crear tus propios proyectos e innovar en el ámbito tecnológico.",
+      ],
+    },
+    {
+      id: "l5",
+      courseId: "c2",
+      title: "¿Quiénes son mis jefes de carrera y coordinadores?",
+      subtitle: "Líderes académicos y contactos clave.",
+      image: "/images/PathFox-Premio.png",
+      content: [
+        "Tus jefes de carrera y coordinadores están para acompañarte en tu trayectoria académica.",
+        "Puedes acudir a ellos para resolver dudas curriculares o para orientación vocacional y profesional.",
+      ],
+    },
+    {
+      id: "l6",
+      courseId: "c2",
+      title: "¿Qué laboratorios debo conocer en el campus?",
+      subtitle: "Espacios físicos para la práctica.",
+      image: "/images/PathFox-estudiante.png",
+      content: [
+        "Los laboratorios son espacios diseñados para que practiques lo aprendido en tus asignaturas técnicas.",
+        "Asegúrate de localizar el Laboratorio de Redes y el Centro de Innovación Tecnológica.",
+        "Al escanear sus códigos QR dentro de la app, podrás desbloquear módulos y sumar puntos en tu ranking.",
+      ],
+      questions: [
+      {
+        id: "q1",
+        question: "¿Dónde puedes practicar lo aprendido en tus clases técnicas?",
+        options: [
+          "En la cafetería de la sede",
+          "En los laboratorios del campus",
+          "En el DAE",
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: "q2",
+        question: "¿Qué laboratorio se menciona en la lección?",
+        options: [
+          "Laboratorio de Seguridad",
+          "Laboratorio de Redes",
+          "Laboratorio de Electrónica",
+        ],
+        correctIndex: 1,
+      },
+    ],
+  },
+
+    /* ───────────── Curso: Mi sede ───────────── */
+    {
+      id: "l1",
+      courseId: "c3",
+      title: "¿Dónde están los principales servicios estudiantiles?",
+      subtitle: "DAE, biblioteca, laboratorios, etc.",
+      image: "/images/PathFox-mapa.png",
+      content: [
+        "Tu sede cuenta con múltiples espacios diseñados para apoyarte: biblioteca, laboratorios, DAE, cafetería y más.",
+        "Puedes usar el mapa interactivo de PathFinder para encontrarlos fácilmente.",
+      ],
+    },
+    {
+      id: "l2",
+      courseId: "c3",
+      title: "¿Cómo puedo reservar salas?",
+      subtitle: "Sistema de reservas y normas de uso.",
+      image: "/images/PathFox-PoleraRoja.png",
+      content: [
+        "Puedes reservar salas a través del portal estudiantil o en la recepción de la sede.",
+        "Recuerda respetar los horarios y cuidar los espacios compartidos.",
+      ],
+    },
+
+    /* ───────────── Curso: Mi DAE ───────────── */
+    {
+      id: "l1",
+      courseId: "c4",
+      title: "¿Qué servicios ofrece el DAE?",
+      subtitle: "Acompañamiento, becas, bienestar.",
+      image: "/images/PathFox-Camino.png",
+      content: [
+        "El DAE te apoya con orientación psicológica, becas, beneficios sociales y actividades extracurriculares.",
+        "Visítalo para mantenerte informado y conectado con la comunidad estudiantil.",
+      ],
+    },
+
+    /* ───────────── Curso: Mi Prueba ───────────── */
+    {
+      id: "l1",
+      courseId: "c5",
+      title: "¿Cómo hacer las pruebas?",
+      subtitle: "Indicaciones básicas.",
+      image: "/images/PathFox-Camino.png",
+      content: [
+        "En este módulo aprenderás cómo se realizan las evaluaciones y cómo preparar tus entregas en el sistema académico.",
+      ],
+    },
+  ];
+}
+
+/* Buscar lección por curso y ID */
+export async function getLessonById(courseId: string, lessonId: string): Promise<LessonDetail | undefined> {
+  const lessons = await getLessonDetails();
+  return lessons.find((l) => l.courseId === courseId && l.id === lessonId);
+}
+
