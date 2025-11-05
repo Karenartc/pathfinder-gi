@@ -8,8 +8,12 @@ export type User = {
     points: number;            
     globalRank: number;        
     career?: string;          
-    avatarUrl?: string;       
-    
+    email?: string;         
+    avatarUrl?: string;  
+    preferences?: {
+        darkMode: boolean;           // true = modo oscuro
+        notificationsEnabled: boolean; // true = recibir notificaciones push   
+    };
 };
 
 /* ────────────────────────────────────────────────
@@ -43,16 +47,31 @@ export type Achievement = {
     description: string;
     pointsAwarded: number;
     iconUrl: string;
-    category?: string;  // Ej: "Exploración", "Social", etc.
+    dateUnlocked?: string;  
 };
 
 export type Place = {
     id: string;
     name: string;
-    location: string;
-    hours: string;
     description: string;
     image: string;
+    location?: string;
+    hours?: string;
+    building?: string;
+    room?: string;
+    qrCodeUrl?: string;
+};
+
+/* ────────────────────────────────────────────────
+Notificación
+──────────────────────────────────────────────── */
+export type Notification = {
+    id: string;
+    message: string;       
+    type: "lesson" | "event" | "qr" | "system"; 
+    dateISO: string;          
+    read: boolean;   
+    link?: string;             
 };
 
 export type CourseLesson = {

@@ -30,13 +30,13 @@ export default async function PlaceDetailPage({ params }: PageProps) {
             <div className={styles.infoRow}>
             <InfoChip
                 icon={<MapPin size={18} />}
-                title={place.location}
+                title={place.location || "Ubicación no disponible"}
                 subtitle="Sede Institucional"
             />
             <InfoChip
                 icon={<Clock size={18} />}
                 title="Horario"
-                subtitle={place.hours}
+                subtitle={place.hours || "Horario no disponible"}
             />
             </div>
 

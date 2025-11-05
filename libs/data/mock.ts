@@ -1,4 +1,4 @@
-import type { User, Course, Event, Place, CourseDetail, LessonDetail  } from "@/libs/types";
+import type { User, Course, Event, Place, CourseDetail, LessonDetail, Notification  } from "@/libs/types";
 
 /* ────────────────────────────────────────────────
 USUARIO ACTUAL
@@ -11,7 +11,12 @@ export async function getUser(): Promise<User> {
         careerCount: 10,
         points: 228,
         globalRank: 26,
+        email: "user@prueba.com",
         avatarUrl: "/images/fox-avatar.png",
+        preferences: {
+            darkMode: false,
+            notificationsEnabled: true,
+        },
     };
 }
 
@@ -147,24 +152,77 @@ export async function getPlaces(): Promise<Place[]> {
     return [
         {
         id: "p1",
-        name: "La Biblioteca",
-        location: "Primer Piso",
-        hours: "Lunes a Viernes, 09:00 a 21:00",
+        name: "Biblioteca Central",
         description:
-            "La Biblioteca es tu recurso académico más valioso en el campus. Más que solo libros, es el espacio ideal para la investigación, el estudio colaborativo y la concentración profunda.",
+            "Espacio de estudio y recursos académicos. Ideal para investigación y trabajo colaborativo.",
         image: "/images/biblioteca-lugar.jpeg",
+        location: "Primer piso",
+        building: "Edificio A",
+        room: "A-101",
+        hours: "Lunes a Viernes, 09:00 a 21:00",
+        qrCodeUrl: "https://pathfinder-app.com/qr/p1"
         },
         {
         id: "p2",
         name: "Centro DAE",
-        location: "Edificio Central, Segundo Piso",
-        hours: "Lunes a Viernes, 10:00 a 18:00",
         description:
-            "El Departamento de Asuntos Estudiantiles (DAE) te acompaña en tu desarrollo personal y bienestar. Aquí puedes informarte sobre becas, talleres y actividades extracurriculares.",
-        image: "images/biblioteca-lugar.jpeg",
+            "Oficina del Departamento de Asuntos Estudiantiles. Aquí puedes informarte sobre becas y actividades.",
+        image: "/images/dae-lugar.jpeg",
+        location: "Segundo piso, Edificio Central",
+        building: "Edificio B",
+        room: "B-204",
+        hours: "Lunes a Viernes, 10:00 a 18:00",
+        qrCodeUrl: "https://pathfinder-app.com/qr/p2"
         },
+        {
+        id: "p3",
+        name: "Casino",
+        description:
+            "Comedor principal del campus. Ofrece menú diario, snacks y bebidas.",
+        image: "/images/casino-lugar.jpeg",
+        location: "Primer piso, junto al patio central",
+        building: "Edificio C",
+        hours: "Lunes a Viernes, 08:00 a 17:00",
+        qrCodeUrl: "https://pathfinder-app.com/qr/p3"
+        },
+        {
+        id: "p4",
+        name: "Biblioteca Central",
+        description:
+            "Espacio de estudio y recursos académicos. Ideal para investigación y trabajo colaborativo.",
+        image: "/images/biblioteca-lugar.jpeg",
+        location: "Primer piso",
+        building: "Edificio A",
+        room: "A-101",
+        hours: "Lunes a Viernes, 09:00 a 21:00",
+        qrCodeUrl: "https://pathfinder-app.com/qr/p1"
+        },
+        {
+        id: "p5",
+        name: "Centro DAE",
+        description:
+            "Oficina del Departamento de Asuntos Estudiantiles. Aquí puedes informarte sobre becas y actividades.",
+        image: "/images/dae-lugar.jpeg",
+        location: "Segundo piso, Edificio Central",
+        building: "Edificio B",
+        room: "B-204",
+        hours: "Lunes a Viernes, 10:00 a 18:00",
+        qrCodeUrl: "https://pathfinder-app.com/qr/p2"
+        },
+        {
+        id: "p6",
+        name: "Casino",
+        description:
+            "Comedor principal del campus. Ofrece menú diario, snacks y bebidas.",
+        image: "/images/casino-lugar.jpeg",
+        location: "Primer piso, junto al patio central",
+        building: "Edificio C",
+        hours: "Lunes a Viernes, 08:00 a 17:00",
+        qrCodeUrl: "https://pathfinder-app.com/qr/p3"
+        }
     ];
 }
+
 
 /* ────────────────────────────────────────────────
 DETALLE DEL LUGAR (buscar por ID)
@@ -174,6 +232,168 @@ export async function getPlaceById(id: string): Promise<Place | undefined> {
     return places.find((p) => p.id === id);
 }
 
+
+/* ────────────────────────────────────────────────
+NOTIFICACIONES (mock local)
+──────────────────────────────────────────────── */
+export async function getNotifications(): Promise<Notification[]> {
+    return [
+        {
+        id: "n1",
+        message: "Has completado la lección 2 de 'Mi sede'",
+        type: "lesson",
+        dateISO: "2025-11-04T09:00:00Z",
+        read: false,
+        },
+        {
+        id: "n2",
+        message: "Nuevo evento: Feria de Bienvenida",
+        type: "event",
+        dateISO: "2025-11-03T16:00:00Z",
+        read: false,
+        link: "/main/details/event/e1", 
+        },
+        {
+        id: "n3",
+        message: "Escaneaste el QR del Centro DAE",
+        type: "qr",
+        dateISO: "2025-11-02T12:00:00Z",
+        read: false,
+        },
+        {
+        id: "n4",
+        message: "Has completado la lección 2 de 'Mi sede'",
+        type: "lesson",
+        dateISO: "2025-11-04T09:00:00Z",
+        read: false,
+        },
+        {
+        id: "n5",
+        message: "Nuevo evento: Feria de Bienvenida",
+        type: "event",
+        dateISO: "2025-11-03T16:00:00Z",
+        read: false,
+        link: "/main/details/event/e1", 
+        },
+        {
+        id: "n6",
+        message: "Escaneaste el QR del Centro DAE",
+        type: "qr",
+        dateISO: "2025-11-02T12:00:00Z",
+        read: false,
+        },
+        {
+        id: "n7",
+        message: "Has completado la lección 2 de 'Mi sede'",
+        type: "lesson",
+        dateISO: "2025-11-04T09:00:00Z",
+        read: false,
+        },
+        {
+        id: "n8",
+        message: "Nuevo evento: Feria de Bienvenida",
+        type: "event",
+        dateISO: "2025-11-03T16:00:00Z",
+        read: false,
+        link: "/main/details/event/e1", 
+        },
+        {
+        id: "n9",
+        message: "Escaneaste el QR del Centro DAE",
+        type: "qr",
+        dateISO: "2025-11-02T12:00:00Z",
+        read: false,
+        },
+        {
+        id: "n10",
+        message: "Has completado la lección 2 de 'Mi sede'",
+        type: "lesson",
+        dateISO: "2025-11-04T09:00:00Z",
+        read: true,
+        },
+        {
+        id: "n11",
+        message: "Nuevo evento: Feria de Bienvenida",
+        type: "event",
+        dateISO: "2025-11-03T16:00:00Z",
+        read: false,
+        link: "/main/details/event/e1", 
+        },
+        {
+        id: "n12",
+        message: "Escaneaste el QR del Centro DAE",
+        type: "qr",
+        dateISO: "2025-11-02T12:00:00Z",
+        read: false,
+        },
+    ];
+}
+
+/* ────────────────────────────────────────────────
+LOGROS / ACHIEVEMENTS
+──────────────────────────────────────────────── */
+import type { Achievement } from "@/libs/types";
+
+export async function getAchievements(): Promise<Achievement[]> {
+    return [
+        {
+        id: "a1",
+        name: "Comienzo de clases 2026",
+        description: "Asististe al evento en Sede, Patio de atrás el 12 de Marzo.",
+        pointsAwarded: 30,
+        iconUrl: "/images/achievements/class-start.png",
+        dateUnlocked: "2026-03-12",
+        },
+        {
+        id: "a2",
+        name: "Curso Mi Carrera Completo",
+        description: "Completaste todos los Módulos del curso Mi Carrera.",
+        pointsAwarded: 25,
+        iconUrl: "/images/achievements/course-complete.png",
+        dateUnlocked: "2026-03-10",
+        },
+        {
+        id: "a3",
+        name: "La Biblioteca",
+        description: "Desbloqueaste La Biblioteca en el Mapa Explorador.",
+        pointsAwarded: 20,
+        iconUrl: "/images/achievements/library.png",
+        dateUnlocked: "2026-03-05",
+        },
+        {
+        id: "a4",
+        name: "Comenzar la Aventura",
+        description: "Ingresaste por primera vez a PathFinder GI.",
+        pointsAwarded: 10,
+        iconUrl: "/images/achievements/start.png",
+        dateUnlocked: "2026-03-01",
+        },
+        {
+        id: "a5",
+        name: "Curso Mi Carrera Completo",
+        description: "Completaste todos los Módulos del curso Mi Carrera.",
+        pointsAwarded: 25,
+        iconUrl: "/images/achievements/course-complete.png",
+        dateUnlocked: "2026-03-10",
+        },
+        {
+        id: "a6",
+        name: "La Biblioteca",
+        description: "Desbloqueaste La Biblioteca en el Mapa Explorador.",
+        pointsAwarded: 20,
+        iconUrl: "/images/achievements/library.png",
+        dateUnlocked: "2026-03-05",
+        },
+        {
+        id: "a7",
+        name: "Comenzar la Aventura",
+        description: "Ingresaste por primera vez a PathFinder GI.",
+        pointsAwarded: 10,
+        iconUrl: "/images/achievements/start.png",
+        dateUnlocked: "2026-03-01",
+        },
+    ];
+}
 /* ────────────────────────────────────────────────
 Mock data para los cursos
 ──────────────────────────────────────────────── */
