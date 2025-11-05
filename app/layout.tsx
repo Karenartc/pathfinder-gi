@@ -13,22 +13,23 @@ export const metadata: Metadata = {
   title: 'PathFinder GI',
   description:
     'Aplicación de apoyo para estudiantes en su primer año de estudio.',
+  icons: {
+    icon: '/icons/PathFox-logo-192x192.png',
+    apple: '/icons/PathFox-logo-192x192.png',
+  },
+  manifest: '/manifest.json',
+  themeColor: '#000000',
+
 };
 
 export default function RootLayout({children,}: {children: React.ReactNode;}) {
   return (
     <html lang="es" className={`${inter.variable}`} suppressHydrationWarning>
-      <head>
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#000000" />
-        <link rel="icon" href="/icons/PathFox-logo-192x192.png" />
-      </head>
       <body>
         {}
         <ThemeProvider>
           {children}
         </ThemeProvider>
-
       </body>
     </html>
   );
