@@ -1,0 +1,178 @@
+.panel {
+    background: rgb(var(--color-surface));
+    border: 1px solid rgb(var(--color-primary) / 0.25);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-sm);
+}
+
+/* ───────────────────────────────────────────
+    Información personal
+─────────────────────────────────────────── */
+.infoSection {
+    display: flex;
+    flex-direction: column;
+}
+
+.avatarBox {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-bottom: var(--space-6);
+}
+
+.avatar {
+    border-radius: var(--radius-full);
+    border: 2px solid rgb(var(--color-outline-variant));
+}
+
+.editAvatar {
+    position: absolute;
+    bottom: 6px;
+    right: 42%;
+    background: rgb(var(--color-primary));
+    color: rgb(var(--color-on-primary));
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: grid;
+    place-items: center;
+}
+
+/* Jerarquía de títulos */
+.sectionTitle,
+.subTitle {
+    font-size: var(--fs-h3); 
+    font-weight: var(--fw-bold);
+    color: rgb(var(--color-on-surface));
+    text-align: left; 
+    margin-bottom: var(--space-6);
+}
+
+/* Lista de información personal */
+.infoList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.infoItem {
+    display: flex;
+    flex-direction: column;
+}
+
+.infoLabel {
+    font-size: var(--fs-body-s);
+    color: rgb(var(--color-on-surface-variant));
+    letter-spacing: 0.03em;
+    font-weight: var(--fw-medium);
+}
+
+.infoValue {
+    font-size: var(--fs-body-l);
+    font-weight: var(--fw-semibold);
+    color: rgb(var(--color-on-surface));
+}
+
+/* ───────────────────────────────────────────
+    Configuración (con iconos)
+─────────────────────────────────────────── */
+.settings {
+    border-top: 1px solid rgb(var(--color-outline-variant));
+    padding-top: var(--space-6);
+}
+
+.settingItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-5) 0;
+    border-top: 1px solid rgb(var(--color-outline-variant) / 0.25);
+}
+
+.settingItem:first-of-type {
+    border-top: none;
+}
+
+/* Bloque de texto + ícono */
+.settingInfo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.iconWrap {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-full);
+    display: grid;
+    place-items: center;
+    background: rgb(var(--color-primary) / 0.15);
+    color: rgb(var(--color-primary));
+    flex-shrink: 0;
+}
+
+.settingTitle {
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-body);
+    color: rgb(var(--color-on-surface));
+    margin: 0;
+}
+
+.settingDesc {
+    font-size: var(--fs-body-s);
+    color: rgb(var(--color-on-surface-variant));
+    margin: 0;
+}
+
+/* ───────────────────────────────────────────
+    Toggle
+─────────────────────────────────────────── */
+.toggle {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    inset: 0;
+    background: rgb(var(--color-outline));
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.slider::before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    top: 3px;
+    left: 3px;
+    border-radius: 50%;
+    background: rgb(var(--color-surface));
+    transition: transform 0.3s;
+}
+
+.toggle input:checked + .slider {
+    background: rgb(var(--color-primary));
+}
+
+.toggle input:checked + .slider::before {
+    transform: translateX(20px);
+}

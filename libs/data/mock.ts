@@ -11,7 +11,12 @@ export async function getUser(): Promise<User> {
         careerCount: 10,
         points: 228,
         globalRank: 26,
+        email: "user@prueba.com",
         avatarUrl: "/images/fox-avatar.png",
+        preferences: {
+            darkMode: false,
+            notificationsEnabled: true,
+        },
     };
 }
 
@@ -318,3 +323,68 @@ export async function getNotifications(): Promise<Notification[]> {
     ];
 }
 
+/* ────────────────────────────────────────────────
+LOGROS / ACHIEVEMENTS
+──────────────────────────────────────────────── */
+import type { Achievement } from "@/libs/types";
+
+export async function getAchievements(): Promise<Achievement[]> {
+    return [
+        {
+        id: "a1",
+        name: "Comienzo de clases 2026",
+        description: "Asististe al evento en Sede, Patio de atrás el 12 de Marzo.",
+        pointsAwarded: 30,
+        iconUrl: "/images/achievements/class-start.png",
+        dateUnlocked: "2026-03-12",
+        },
+        {
+        id: "a2",
+        name: "Curso Mi Carrera Completo",
+        description: "Completaste todos los Módulos del curso Mi Carrera.",
+        pointsAwarded: 25,
+        iconUrl: "/images/achievements/course-complete.png",
+        dateUnlocked: "2026-03-10",
+        },
+        {
+        id: "a3",
+        name: "La Biblioteca",
+        description: "Desbloqueaste La Biblioteca en el Mapa Explorador.",
+        pointsAwarded: 20,
+        iconUrl: "/images/achievements/library.png",
+        dateUnlocked: "2026-03-05",
+        },
+        {
+        id: "a4",
+        name: "Comenzar la Aventura",
+        description: "Ingresaste por primera vez a PathFinder GI.",
+        pointsAwarded: 10,
+        iconUrl: "/images/achievements/start.png",
+        dateUnlocked: "2026-03-01",
+        },
+        {
+        id: "a5",
+        name: "Curso Mi Carrera Completo",
+        description: "Completaste todos los Módulos del curso Mi Carrera.",
+        pointsAwarded: 25,
+        iconUrl: "/images/achievements/course-complete.png",
+        dateUnlocked: "2026-03-10",
+        },
+        {
+        id: "a6",
+        name: "La Biblioteca",
+        description: "Desbloqueaste La Biblioteca en el Mapa Explorador.",
+        pointsAwarded: 20,
+        iconUrl: "/images/achievements/library.png",
+        dateUnlocked: "2026-03-05",
+        },
+        {
+        id: "a7",
+        name: "Comenzar la Aventura",
+        description: "Ingresaste por primera vez a PathFinder GI.",
+        pointsAwarded: 10,
+        iconUrl: "/images/achievements/start.png",
+        dateUnlocked: "2026-03-01",
+        },
+    ];
+}

@@ -1,0 +1,88 @@
+.profilePage {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-6) var(--space-10);
+    min-height: calc(100vh - 128px);
+}
+
+.content {
+    display: grid;
+    grid-template-columns: 1.2fr 2fr; 
+    gap: var(--space-2);
+    max-width: 1320px;
+    width: 100%;
+}
+
+/* Ambos paneles con su propio espacio y fondo */
+.left,
+.right {
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+}
+
+/* Perfil (izquierda): más compacto y centrado verticalmente */
+.left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-8);
+    max-height: fit-content;
+}
+
+/* Logros (derecha): más espacio para las cards */
+.right {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: var(--space-10);
+}
+
+@media (max-width: 1024px) {
+    .content {
+        grid-template-columns: 1fr;
+        gap: var(--space-8);
+        max-width: 900px;
+    }
+
+    .left,
+    .right {
+        padding: var(--space-6);
+    }
+
+    .left {
+        align-items: center;
+        max-width: 520px;
+        margin-inline: auto;
+    }
+
+    .right {
+        padding-top: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .profilePage {
+        padding: var(--space-6);
+    }
+
+    .content {
+        grid-template-columns: 1fr;
+        gap: var(--space-6);
+    }
+
+    .left,
+    .right {
+        padding: var(--space-5);
+        border-radius: var(--radius-lg);
+    }
+
+    .left {
+        max-width: 100%;
+        margin-inline: auto;
+    }
+
+    .right {
+        gap: var(--space-5);
+    }
+}
