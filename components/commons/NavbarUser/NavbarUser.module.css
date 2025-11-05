@@ -103,6 +103,7 @@
 }
 .iconBtn:hover {
     color: rgb(var(--color-primary));
+    text-decoration: none;
 }
 .bellDot {
     position: absolute;
@@ -143,6 +144,7 @@
 .profile:hover {
     background: rgb(var(--color-outline) / 0.1);
     border-radius: 10px;
+    text-decoration: none;
 }
 .avatar {
     border-radius: var(--radius-full);
@@ -196,6 +198,7 @@
 }
 .mobileItem:hover {
     background: rgb(var(--color-outline) / 0.1);
+    text-decoration: none;
 }
 .activeMobile {
     background: rgb(var(--color-primary-container));
@@ -275,6 +278,7 @@
 }
 .iconBtn:hover {
     color: rgb(var(--color-primary));
+    text-decoration: none;
 }
 
 /* indicador */
