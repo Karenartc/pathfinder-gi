@@ -34,8 +34,10 @@ export default function Input({
             <input
             id={inputId}
             className={styles.input}
-            aria-invalid={!!error || undefined}
-            aria-describedby={[helperId, errorId].filter(Boolean).join(' ') || undefined}
+            {...(error && { 'aria-invalid': true })}
+            {...([helperId, errorId].filter(Boolean).length > 0 && { 
+                'aria-describedby': [helperId, errorId].filter(Boolean).join(' ') 
+            })}
             {...rest}
             />
             {rightAction && <span className={styles.rightAction}>{rightAction}</span>}

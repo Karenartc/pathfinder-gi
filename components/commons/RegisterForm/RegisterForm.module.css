@@ -47,3 +47,14 @@
 .iconButton:hover {
     color: rgb(var(--color-on-surface));
 }
+
+.errorMessage {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  color: #c33;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  text-align: center;
+}
