@@ -1,0 +1,431 @@
+/* LAYOUT GENERAL */
+.lessonLayout {
+    display: flex;
+    position: relative;
+    transition: all var(--duration-std) ease;
+    min-height: 90vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+    flex-shrink: 0;
+    width: 320px;
+    background: rgb(var(--color-surface));
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-4);
+    overflow-y: auto;
+    transition: width var(--duration-std) ease, padding var(--duration-std) ease;
+}
+
+/* Estados de ancho */
+.sidebarExpandedState {
+    width: 320px;
+}
+.sidebarCollapsedState {
+    width: 80px;
+}
+
+/* Toggle interno (flecha dentro del sidebar) */
+.sidebarToggleInternal {
+    background: none;
+    border: none;
+    color: rgb(var(--color-on-surface));
+    cursor: pointer;
+    padding: var(--space-2);
+    border-radius: var(--radius-full);
+    transition: background var(--duration-fast);
+    margin-bottom: var(--space-4);
+}
+.sidebarToggleInternal:hover {
+    background: rgb(var(--color-outline-variant) / 0.25);
+}
+
+/* Título del sidebar */
+.sidebarTitle {
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-h2);
+    margin-bottom: var(--space-4);
+}
+
+/* Lista de lecciones */
+.lessonList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+/* Cada lección del sidebar */
+.lessonItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    background: rgb(var(--color-surface));
+    border-radius: var(--radius-md);
+    border: 1px solid rgb(var(--color-outline) / 0.2);
+    padding: var(--space-4);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    color: rgb(var(--color-on-surface));
+    text-decoration: none;
+}
+.lessonItem:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+.sidebarCollapsedState .lessonItem {
+    justify-content: center;
+}
+.active {
+    border-color: rgb(var(--color-primary));
+    background: rgb(var(--color-primary-container));
+}
+
+/* Icono índice de la lección */
+.lessonIndex {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background: rgb(var(--color-outline-variant));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--fw-semibold);
+    color: rgb(var(--color-on-surface));
+}
+.active .lessonIndex {
+    background: rgb(var(--color-primary));
+    color: rgb(var(--color-on-primary));
+}
+
+/* CONTENIDO PRINCIPAL */
+.lessonContent {
+    flex: 1;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-6);
+    transition: margin-left var(--duration-std) ease;
+    min-height: 70vh;
+}
+
+/* HEADER */
+.lessonHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-10);
+}
+.backBtn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: rgb(var(--color-primary));
+    font-weight: var(--fw-semibold);
+    text-decoration: none !important;
+}
+.progress {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+.progressBar {
+    width: 100px;
+    height: 6px;
+    background: rgb(var(--color-outline-variant));
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+.progressFill {
+    height: 6px;
+    background: rgb(var(--color-secondary));
+    border-radius: var(--radius-full);
+}
+
+/* BODY */
+.lessonBody {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+/* Bloque superior (imagen + título + subtítulo) */
+.lessonHeaderTop {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    
+    gap: var(--space-4);
+}
+
+.lessonImage {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    flex-shrink: 0;
+    margin-top: var(--space-1);
+}
+
+.lessonTextHeader {
+    flex: 1;
+}
+
+.lessonTextHeader h1 {
+    font-size: var(--fs-h1);
+    font-weight: var(--fw-bold);
+    line-height: 1.2;
+}
+
+.lessonTextHeader h4 {
+    font-size: var(--fs-subtitle);
+    color: rgb(var(--color-outline));
+    margin-top: var(--space-1);
+}
+
+/* Texto descriptivo */
+.lessonDescription {
+    display: flex;
+    flex-direction: column;
+    text-align:justify;
+    gap: var(--space-3);
+    line-height: var(--lh-body);
+    margin-top: var(--space-4);
+    max-width: 850px; 
+}
+
+
+/* HEADER SUPERIOR */
+.lessonTopHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-8);
+}
+
+.backBtnTop {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: rgb(var(--color-primary));
+    font-weight: var(--fw-semibold);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+.backBtnTop:hover {
+    color: rgb(var(--color-primary) / 0.8);
+}
+
+.lessonTopInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-2);
+}
+
+.progressTop {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.progressBar {
+    width: 120px;
+    height: 6px;
+    background: rgb(var(--color-outline-variant));
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+.progressFill {
+    height: 6px;
+    background: rgb(var(--color-secondary));
+    border-radius: var(--radius-full);
+}
+
+/* FOOTER NUEVO */
+.lessonFooter {
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid rgb(var(--color-outline) / 0.2);
+    display: flex;
+    justify-content: flex-start;
+}
+
+.quizButtonFooter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    background: rgb(var(--color-primary));
+    color: rgb(var(--color-on-primary));
+    border-radius: var(--radius-full);
+    padding: var(--space-4) var(--space-6);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-body-l);
+    text-decoration: none;
+    box-shadow: var(--shadow-md);
+    transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.quizButtonFooter:hover {
+    background: rgb(var(--color-primary) / 0.85);
+    transform: translateY(-2px);
+}
+
+/* MOBILE (drawer) */
+@media (max-width: 900px) {
+    .lessonLayout {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 260px;
+        background: rgb(var(--color-surface));
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        box-shadow: var(--shadow-lg);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: var(--z-modal);
+    }
+
+    .sidebarExpandedState {
+        transform: translateX(0);
+    }
+
+    /* Overlay detrás del drawer */
+    .sidebarOverlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(2px);
+        z-index: calc(var(--z-modal) - 1);
+    }
+
+    /* Flecha interna (cerrar) */
+    .sidebarToggleInternal {
+        position: absolute;
+        top: var(--space-4);
+        right: var(--space-4);
+        background: rgb(var(--color-primary-container));
+        color: rgb(var(--color-on-primary-container));
+        border-radius: var(--radius-full);
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        cursor: pointer;
+    }
+    .sidebarToggleInternal:hover {
+        background: rgb(var(--color-primary));
+        color: rgb(var(--color-on-primary));
+    }
+}
+
+@media (max-width: 700px) {
+    .lessonHeaderTop {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .lessonImage {
+        margin-bottom: var(--space-3);
+    }
+
+    .lessonTextHeader h1 {
+        font-size: var(--fs-h2);
+    }
+
+    .lessonDescription {
+        text-align: justify;
+        max-width: 100%;
+    }
+}
+
+
+/* EXTRA SMALL (<= 400px) */
+@media (max-width: 400px) {
+    .lessonContent {
+        padding: var(--space-4);
+    }
+
+    .lessonHeader {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: var(--space-3);
+    }
+
+    .lessonBody {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .lessonBody h1 {
+        font-size: var(--fs-h3);
+    }
+
+    .lessonBody h4 {
+        font-size: var(--fs-body);
+    }
+
+    .sidebar {
+        width: 85%;
+        max-width: 260px;
+        border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    }
+
+    .sidebarToggleInternal {
+        width: 32px;
+        height: 32px;
+        top: var(--space-3);
+        right: var(--space-3);
+    }
+}
+
+/* BOTÓN FLOTANTE MOBILE (abrir sidebar) */
+.sidebarToggleMobile {
+    position: fixed;
+    top: var(--space-5);
+    left: var(--space-5);
+    z-index: var(--z-sticky);
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: var(--radius-full);
+    backdrop-filter: blur(10px);
+    background: rgba(var(--color-surface) / 0.65);
+    color: rgb(var(--color-on-surface));
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.25s ease;
+}
+.sidebarToggleMobile:hover {
+    background: rgba(var(--color-surface) / 0.85);
+    transform: scale(1.05);
+}
+
+/* Oculto en desktop */
+@media (min-width: 901px) {
+    .sidebarToggleMobile {
+        display: none !important;
+    }
+}
+
+/* LINKS SIN SUBRAYADO */
+.lessonLayout a,
+.lessonLayout a:visited,
+.lessonLayout a:hover,
+.lessonLayout a:focus,
+.lessonLayout a:active {
+    text-decoration: none !important;
+    outline: none;
+}
