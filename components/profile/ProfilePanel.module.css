@@ -176,3 +176,27 @@
 .toggle input:checked + .slider::before {
     transform: translateX(20px);
 }
+
+.logoutBtn {
+    margin-top: var(--space-6);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    background: rgb(var(--color-error) / 0.1);
+    color: rgb(var(--color-error));
+    border: 1px solid rgb(var(--color-error) / 0.4);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-body);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.logoutBtn:hover {
+    background: rgb(var(--color-error));
+    color: rgb(var(--color-on-error));
+}
+
