@@ -76,7 +76,7 @@ export default function LoginForm() {
             }
 
             // Redirigir a '' después del login exitoso
-            router.push('/userhome'); // Redirigir al home de usuario luego de iniciar sesión
+            router.push(ROUTES.userhome); // Redirigir al home de usuario luego de iniciar sesión
             
         } catch (error) {
             // Manejar errores de conexión
