@@ -1,16 +1,24 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import styles from "./ProfilePanel.module.css";
 import { useState } from "react";
 import type { User } from "@/libs/types";
-import { Moon, Bell } from "lucide-react";
+import { Moon, Bell, LogOut } from "lucide-react";
+import { ROUTES } from "@/libs/routes";
 
 export default function ProfilePanel({ user }: { user: User }) {
     const [darkMode, setDarkMode] = useState(user.preferences?.darkMode ?? false);
     const [notifications, setNotifications] = useState(
         user.preferences?.notificationsEnabled ?? true
     );
+    const router = useRouter();
+
+    const handleLogout = () => {
+        localStorage.removeItem("authToken");
+        router.push(ROUTES.home);
+    };
 
     return (
         <aside className={styles.panel}>
@@ -23,6 +31,7 @@ export default function ProfilePanel({ user }: { user: User }) {
                 width={100}
                 height={100}
                 className={styles.avatar}
+                priority
             />
             <button className={styles.editAvatar}>＋</button>
             </div>
@@ -94,6 +103,11 @@ export default function ProfilePanel({ user }: { user: User }) {
                 <span className={styles.slider}></span>
             </label>
             </div>
+            {/* 🚪 Cerrar sesión */}
+            <button onClick={handleLogout} className={styles.logoutBtn}>
+                <LogOut size={18} />
+                Cerrar sesión
+            </button>
         </div>
         </aside>
     );

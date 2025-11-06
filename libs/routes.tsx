@@ -17,5 +17,5 @@ export const ROUTES = {
     place: (id: string) => `/main/details/place/${id}`,
     courseLesson: (courseId: string, lessonId: string) => `/main/courses/${courseId}/lesson/${lessonId}`,
     },
-
+    admin: '/admin',
 };

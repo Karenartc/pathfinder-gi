@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css'
 import ThemeProvider from '../components/ThemeProvider';
@@ -9,6 +9,13 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+  ],
+};
+
 export const metadata: Metadata = {
   title: 'PathFinder GI',
   description:
@@ -18,8 +25,6 @@ export const metadata: Metadata = {
     apple: '/icons/PathFox-logo-192x192.png',
   },
   manifest: '/manifest.json',
-  themeColor: '#000000',
-
 };
 
 export default function RootLayout({children,}: {children: React.ReactNode;}) {
