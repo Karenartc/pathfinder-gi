@@ -1,0 +1,192 @@
+.adminDashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--space-10);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  padding-bottom: var(--space-20);
+}
+
+/* Header */
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.headerRow h1 {
+  font-size: var(--fs-h3);
+  color: rgb(var(--color-on-surface));
+}
+
+/* Botón cerrar sesión */
+.logoutBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  border: 1px solid rgb(var(--color-outline-variant));
+  background: rgb(var(--color-surface));
+  color: rgb(var(--color-on-surface));
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.logoutBtn:hover {
+  background: rgb(var(--color-secondary) / 0.15);
+  color: rgb(var(--color-secondary));
+}
+
+/* ──────────────────────────────
+   KPIs (grid adaptable)
+────────────────────────────── */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-6);
+}
+
+.kpiCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  background: rgb(var(--color-surface));
+  border: 1px solid rgb(var(--color-outline-variant));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-5) var(--space-6);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.kpiCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.iconBox {
+  background: rgb(var(--color-secondary) / 0.2);
+  color: rgb(var(--color-secondary));
+  border-radius: var(--radius-full);
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+}
+
+.kpiLabel {
+  font-size: var(--fs-body-s);
+  color: rgb(var(--color-on-surface-variant));
+}
+.kpiValue {
+  font-size: var(--fs-h3);
+  color: rgb(var(--color-secondary));
+  font-weight: var(--fw-bold);
+}
+
+/* ──────────────────────────────
+   Charts
+────────────────────────────── */
+.chartsRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: var(--space-8);
+}
+
+.chartCard {
+  background: rgb(var(--color-surface));
+  border: 1px solid rgb(var(--color-outline-variant));
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+
+.chartCard h3 {
+  font-size: var(--fs-h5);
+  margin-bottom: var(--space-4);
+  color: rgb(var(--color-on-surface));
+}
+
+/* ──────────────────────────────
+   Tabla responsive
+────────────────────────────── */
+.tableCard {
+  background: rgb(var(--color-surface));
+  border: 1px solid rgb(var(--color-outline-variant));
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto; /* ✅ Scroll horizontal si es necesario */
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 400px; /* ✅ previene que se rompa en pantallas muy pequeñas */
+}
+
+.table th,
+.table td {
+  padding: var(--space-3);
+  text-align: left;
+  border-bottom: 1px solid rgb(var(--color-outline-variant) / 0.2);
+  white-space: nowrap; /* ✅ evita que las palabras se corten */
+}
+
+.table th {
+  color: rgb(var(--color-on-surface-variant));
+  font-weight: var(--fw-semibold);
+}
+.table td {
+  color: rgb(var(--color-on-surface));
+  font-size: var(--fs-body-s);
+}
+
+.table tr:hover {
+  background: rgb(var(--color-outline) / 0.05);
+}
+
+/* ──────────────────────────────
+   Responsive ajustes
+────────────────────────────── */
+@media (max-width: 1024px) {
+  .chartsRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr); /* ✅ 2 KPIs por fila */
+    gap: var(--space-5);
+  }
+
+  .chartCard,
+  .tableCard {
+    padding: var(--space-5);
+  }
+
+  .kpiCard {
+    padding: var(--space-4);
+    gap: var(--space-3);
+  }
+
+  .kpiValue {
+    font-size: var(--fs-h4);
+  }
+
+  .adminDashboard {
+    padding: var(--space-6);
+  }
+
+  .table th,
+  .table td {
+    padding: var(--space-2);
+  }
+}
+
+@media (max-width: 500px) {
+  .kpiGrid {
+    grid-template-columns: 1fr;
+  }
+}

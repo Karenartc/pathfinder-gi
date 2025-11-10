@@ -1,0 +1,111 @@
+.nav {
+  background: rgb(var(--color-surface));
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  justify-content:space-around;
+}
+
+.inner {
+  width: 100%;
+  max-width: var(--container-max);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+}
+
+.logoBox {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 140px;
+}
+.logo {
+    height: auto;
+    width: 100%;
+    object-fit: contain;
+}
+
+.title {
+  font-size: var(--fs-h5);
+  font-weight: var(--fw-bold);
+  color: rgb(var(--color-on-surface));
+}
+
+/* Perfil admin */
+.profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.profile:hover {
+  background: rgb(var(--color-outline) / 0.1);
+}
+
+.avatar {
+  border-radius: var(--radius-full);
+  border: 2px solid rgb(var(--color-outline-variant));
+}
+
+.username {
+  font-weight: var(--fw-medium);
+  color: rgb(var(--color-on-surface));
+  font-size: var(--fs-body);
+}
+
+/* Dropdown */
+.dropdown {
+  position: absolute;
+  top: 65px;
+  right: var(--space-8);
+  background: rgb(var(--color-surface));
+  border: 1px solid rgb(var(--color-outline-variant));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-2);
+  z-index: 100;
+}
+
+.dropdown button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: none;
+  border: none;
+  color: rgb(var(--color-on-surface));
+  padding: var(--space-3) var(--space-5);
+  font-size: var(--fs-body);
+  width: 100%;
+  text-align: left;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dropdown button:hover {
+  background: rgb(var(--color-error) / 0.1);
+  color: rgb(var(--color-error));
+}
+
+@media (max-width: 768px) {
+  .inner {
+    padding-inline: var(--space-5); 
+  }
+
+  .title {
+    font-size: var(--fs-body-l);
+  }
+
+  .profile .username {
+    display: none; 
+  }
+}
