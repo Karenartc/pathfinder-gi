@@ -171,7 +171,13 @@ export async function POST(request: Request) {
       totalPoints: 0,
       avatarUrl: "",
       createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
+      updatedAt: serverTimestamp(),
+      careerRank: 0,
+      globalRank: 0,
+      preferences: {
+        darkMode: false,
+        notificationsEnabled: true
+      }
     });
 
     // 7. Respuesta exitosa (sin exponer información sensible)

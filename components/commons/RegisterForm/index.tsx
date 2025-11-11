@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { auth, db } from '@/libs/firebaseConfig';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { ROUTES } from '@/libs/routes';
@@ -9,8 +12,16 @@ import Link from 'next/link';
 import { Eye, EyeOff } from 'lucide-react'; 
 import styles from './RegisterForm.module.css';
 
+// Carreras válidas del sistema
+const VALID_CAREERS = [
+    "Diseño Gráfico",
+    "Ingeniería Informática",
+    "Ingeniería Automatización",
+    "Administración de Empresas",
+];
+
 export default function RegisterForm() {
-    const router = useRouter(); // Hook para navegación
+    const router = useRouter();
     const [form, setForm] = useState({
         firstName: '',
         lastName: '',
@@ -33,20 +44,20 @@ export default function RegisterForm() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
         setErrors({}); // Limpiar errores previos antes de validar nuevamente
 
+        //Validaciones
         const newErrors: Record<string, string> = {};
         if (!form.firstName) newErrors.firstName = 'Campo requerido';
         if (!form.lastName) newErrors.lastName = 'Campo requerido';
         if (!form.birthDate) newErrors.birthDate = 'Campo requerido';
-        if (!form.rut) newErrors.rut = 'Campo requerido'; // Validación de RUT
+        if (!form.rut) newErrors.rut = 'Campo requerido';
+        if (!form.career) newErrors.career = 'Debes seleccionar una carrera';
         if (!form.phone) newErrors.phone = 'Campo requerido';
         if (!form.email) newErrors.email = 'Campo requerido';
         else if (!/\S+@\S+\.\S+/.test(form.email)) newErrors.email = 'Correo inválido';
         if (!form.password) newErrors.password = 'Campo requerido';
         if (form.password !== form.confirm) newErrors.confirm = 'Las contraseñas no coinciden';
-
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
@@ -58,71 +69,74 @@ export default function RegisterForm() {
         setIsLoading(true); // Activar estado de carga
 
         try {
-            // Convertir fecha de YYYY-MM-DD a DD/MM/YYYY para el backend
-            const [year, month, day] = form.birthDate.split('-');
-            const birthDateFormatted = `${day}/${month}/${year}`;
+            // Crear usuario en Firebase Auth
+            const userCredential = await createUserWithEmailAndPassword(
+                auth,
+                form.email,
+                form.password
+            );
 
-            // Hacer petición POST al endpoint de registro
-            const response = await fetch('/api/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
+            const user = userCredential.user;
+
+            // Crear documento en Firestore
+            const fullName = `${form.firstName} ${form.lastName}`;
+            
+            await setDoc(doc(db, "users", user.uid), {
+                uid: user.uid,
+                email: form.email,
+                firstName: form.firstName,
+                lastName: form.lastName,
+                fullName: fullName,
+                rut: form.rut,
+                phone: form.phone,
+                birthDate: form.birthDate,
+                career: form.career,
+                role: "student",
+                totalPoints: 0,
+                avatarUrl: "/images/fox-avatar.png",
+                preferences: {
+                    darkMode: false,
+                    notificationsEnabled: true,
                 },
-                body: JSON.stringify({
-                    firstName: form.firstName,
-                    lastName: form.lastName,
-                    birthDate: birthDateFormatted,
-                    phone: form.phone,
-                    email: form.email,
-                    password: form.password,
-                    confirmPassword: form.confirm,
-                    rut: form.rut,
-                    career: form.career || '',
-                }),
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
             });
 
-            const data = await response.json();
-
-            // Si la respuesta no es exitosa, mostrar errores
-            if (!response.ok) {
-                if (data.errors && Array.isArray(data.errors)) {
-                    // Mostrar el primer error como error general
-                    setErrors({ general: data.errors.join(', ') });
-                } else {
-                    setErrors({ general: data.message || 'Error al crear la cuenta' });
-                }
-                return;
-            }
-
-            // Registro exitoso
-            console.log('Registro exitoso:', data);
-
-            // Redirigir al home de usuario luego de registrarse
+            console.log("Registro exitoso");
+            
+            // Redirigir al dashboard
             router.push(ROUTES.userhome);
             
-        } catch (error) {
-            // Manejar errores de conexión
-            console.error('Error en registro:', error);
-            setErrors({ 
-                general: 'Error de conexión. Por favor, intenta nuevamente.' 
-            });
+        } catch (error: any) {
+            console.error("Error en registro:", error);
+            
+            let errorMessage = "Error al registrarse";
+            
+            if (error.code === "auth/email-already-in-use") {
+                errorMessage = "Este email ya está registrado";
+            } else if (error.code === "auth/weak-password") {
+                errorMessage = "La contraseña debe tener al menos 6 caracteres";
+            } else if (error.code === "auth/invalid-email") {
+                errorMessage = "Email inválido";
+            } else if (error.code?.includes('permission-denied')) {
+                errorMessage = "Error de permisos. Contacta al administrador";
+            }
+            
+            setErrors({ general: errorMessage });
         } finally {
-            // Desactivar estado de carga
             setIsLoading(false);
         }
-
-        // Cierre del BACKEND
     };
+    // Cierre del BACKEND
 
     return (
         <form onSubmit={handleSubmit} className={styles.form}>
-            {/* Mostrar mensaje de error general del backend */}
             {errors.general && (
                 <div className={styles.errorMessage}>
                     {errors.general}
                 </div>
             )}    
-            {/* Nombre y Apellido */}
+
             <div className={styles.nameRow}>
                 <Input
                     name="firstName"
@@ -132,7 +146,7 @@ export default function RegisterForm() {
                     error={errors.firstName}
                     fullWidth
                     required
-                    disabled={isLoading} // Deshabilitar durante la carga
+                    disabled={isLoading}
                 />
                 <Input
                     name="lastName"
@@ -142,7 +156,7 @@ export default function RegisterForm() {
                     error={errors.lastName}
                     fullWidth
                     required
-                    disabled={isLoading} // Deshabilitar durante la carga
+                    disabled={isLoading}
                 />
             </div>
 
@@ -154,7 +168,7 @@ export default function RegisterForm() {
                 error={errors.birthDate}
                 fullWidth
                 required
-                disabled={isLoading} // Deshabilitar durante la carga
+                disabled={isLoading}
             />
 
             <Input
@@ -166,8 +180,37 @@ export default function RegisterForm() {
                 error={errors.rut}
                 fullWidth
                 required
-                disabled={isLoading} // Deshabilitar durante la carga
+                disabled={isLoading}
             />
+
+            {/* Campo de Carrera */}
+            <div className={styles.inputWrapper}>
+                <label htmlFor="career" className={styles.label}>
+                    Carrera <span style={{ color: 'red' }}>*</span>
+                </label>
+                <select
+                    id="career"
+                    name="career"
+                    value={form.career}
+                    onChange={handleChange}
+                    className={`${styles.select} ${errors.career ? styles.selectError : ''}`}
+                    required
+                    disabled={isLoading}
+                    aria-label="Selecciona tu carrera"
+                >
+                    <option value="" disabled>
+                        Selecciona tu carrera
+                    </option>
+                    {VALID_CAREERS.map((career) => (
+                        <option key={career} value={career}>
+                            {career}
+                        </option>
+                    ))}
+                </select>
+                {errors.career && (
+                    <span className={styles.errorText}>{errors.career}</span>
+                )}
+            </div>
 
             <Input
                 name="phone"
@@ -178,7 +221,7 @@ export default function RegisterForm() {
                 error={errors.phone}
                 fullWidth
                 required
-                disabled={isLoading} // Deshabilitar durante la carga
+                disabled={isLoading}
             />
 
             <Input
@@ -190,10 +233,9 @@ export default function RegisterForm() {
                 error={errors.email}
                 fullWidth
                 required
-                disabled={isLoading} // Deshabilitar durante la carga
+                disabled={isLoading}
             />
 
-            {/* Contraseña con toggle 👁️ */}
             <Input
                 name="password"
                 type={showPassword ? 'text' : 'password'}
@@ -213,10 +255,9 @@ export default function RegisterForm() {
                 }
                 fullWidth
                 required
-                disabled={isLoading} // Deshabilitar durante la carga
+                disabled={isLoading}
             />
 
-            {/* Confirmar contraseña con toggle 👁️ */}
             <Input
                 name="confirm"
                 type={showConfirm ? 'text' : 'password'}
@@ -236,17 +277,16 @@ export default function RegisterForm() {
                 }
                 fullWidth
                 required
-                disabled={isLoading} // Deshabilitar durante la carga
+                disabled={isLoading}
             />
 
-        <Button type="submit" variant="primary" fullWidth disabled={isLoading}>
-            {/* Cambiar texto del botón según el estado de carga */}
-            {isLoading ? 'Creando cuenta...' : 'Crear cuenta'}
-        </Button>
+            <Button type="submit" variant="primary" fullWidth disabled={isLoading}>
+                {isLoading ? 'Creando cuenta...' : 'Crear cuenta'}
+            </Button>
 
-        <p className={styles.login}>
-            ¿Ya tienes una cuenta? <Link href={ROUTES.login}>Inicia sesión</Link>
-        </p>
+            <p className={styles.login}>
+                ¿Ya tienes una cuenta? <Link href={ROUTES.login}>Inicia sesión</Link>
+            </p>
         </form>
     );
 }

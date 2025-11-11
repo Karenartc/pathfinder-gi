@@ -8,6 +8,7 @@ import LessonSidebar from "./LessonSidebar";
 import styles from "../lesson.module.css";
 import type { LessonDetail as LessonType, CourseDetail } from "@/libs/types";
 import { getLessonById, getCourseById } from "@/libs/data";
+import { getAuth } from "firebase/auth";
 
 type Props = {
     courseId: string;
@@ -21,16 +22,38 @@ export default function LessonDetail({ courseId, lessonId }: Props) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        async function fetchData() {
-        const [c, l] = await Promise.all([
-            getCourseById(courseId),
-            getLessonById(courseId, lessonId),
-        ]);
-        setCourse(c || null);
-        setLesson(l || null);
-        setLoading(false);
+      async function fetchData() {
+        try {
+          // Obtener token
+          const auth = getAuth();
+          const currentUser = auth.currentUser;
+          if (!currentUser) return;
+
+          const token = await currentUser.getIdToken();
+
+          // Obtener curso y lección desde las APIs
+          const [courseRes, lessonRes] = await Promise.all([
+            fetch(`/api/modules/${courseId}`, {
+              headers: { 'Authorization': `Bearer ${token}` },
+            }),
+            fetch(`/api/modules/${courseId}/lessons/${lessonId}`, {
+              headers: { 'Authorization': `Bearer ${token}` },
+            }),
+          ]);
+
+          const courseData = await courseRes.json();
+          const lessonData = await lessonRes.json();
+
+          if (courseData.ok) setCourse(courseData.course || null);
+          if (lessonData.ok) setLesson(lessonData.lesson || null);
+
+        } catch (error) {
+          console.error("Error al cargar datos:", error);
+        } finally {
+          setLoading(false);
         }
-        fetchData();
+      }
+      fetchData();
     }, [courseId, lessonId]);
 
     if (loading) {

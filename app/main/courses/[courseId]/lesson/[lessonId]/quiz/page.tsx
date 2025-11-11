@@ -6,6 +6,7 @@ import Link from "next/link";
 import styles from "./quiz.module.css";
 import { getLessonById, getCourseById } from "@/libs/data";
 import type { LessonDetail, CourseDetail } from "@/libs/types";
+import { getAuth } from "firebase/auth";
 
 type Props = {
     params: Promise<{ courseId: string; lessonId: string }>;
@@ -24,16 +25,38 @@ export default function LessonQuizPage({ params }: Props) {
     const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(null); // 👈 NUEVO
 
     useEffect(() => {
-        async function fetchData() {
-        const [c, l] = await Promise.all([
-            getCourseById(courseId),
-            getLessonById(courseId, lessonId),
-        ]);
-        setCourse(c || null);
-        setLesson(l || null);
-        if (l?.questions) setQuestionOrder(l.questions.map((q) => q.id));
+      async function fetchData() {
+        try {
+          const auth = getAuth();
+          const currentUser = auth.currentUser;
+          if (!currentUser) return;
+
+          const token = await currentUser.getIdToken();
+
+          const [courseRes, lessonRes] = await Promise.all([
+            fetch(`/api/modules/${courseId}`, {
+              headers: { 'Authorization': `Bearer ${token}` },
+            }),
+            fetch(`/api/modules/${courseId}/lessons/${lessonId}`, {
+              headers: { 'Authorization': `Bearer ${token}` },
+            }),
+          ]);
+
+          const courseData = await courseRes.json();
+          const lessonData = await lessonRes.json();
+
+          if (courseData.ok) setCourse(courseData.course || null);
+          if (lessonData.ok) {
+            setLesson(lessonData.lesson || null);
+            if (lessonData.lesson?.questions) {
+              setQuestionOrder(lessonData.lesson.questions.map((q: any) => q.id));
+            }
+          }
+        } catch (error) {
+          console.error("Error:", error);
         }
-        fetchData();
+      }
+      fetchData();
     }, [courseId, lessonId]);
 
     if (!lesson || !course) {

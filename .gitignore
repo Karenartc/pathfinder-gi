@@ -43,3 +43,7 @@ next-env.d.ts
 # PWA build artifacts
 public/sw.js
 public/workbox-*.js
+
+# ⚠️ CRÍTICO: Credenciales de Firebase Admin SDK
+serviceAccountKey.json
+firebase-adminsdk-*.json

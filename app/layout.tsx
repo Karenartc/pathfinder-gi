@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
+import { AuthProvider } from "../contexts/AuthContext";
 import './globals.css'
 import ThemeProvider from '../components/ThemeProvider';
 
@@ -32,9 +33,11 @@ export default function RootLayout({children,}: {children: React.ReactNode;}) {
     <html lang="es" className={`${inter.variable}`} suppressHydrationWarning>
       <body>
         {}
-        <ThemeProvider>
-          {children}
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider>
+            {children}
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );
