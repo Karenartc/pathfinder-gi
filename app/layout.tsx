@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css'
 import ThemeProvider from '../components/ThemeProvider';
+import { AuthProvider } from '@/contexts/AuthContext';  // 🔹 importa tu contexto
 
 const inter = Inter({
   subsets: ['latin'],
@@ -18,8 +19,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: 'PathFinder GI',
-  description:
-    'Aplicación de apoyo para estudiantes en su primer año de estudio.',
+  description: 'Aplicación de apoyo para estudiantes en su primer año de estudio.',
   icons: {
     icon: '/icons/PathFox-logo-192x192.png',
     apple: '/icons/PathFox-logo-192x192.png',
@@ -27,13 +27,19 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
 };
 
-export default function RootLayout({children,}: {children: React.ReactNode;}) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="es" className={`${inter.variable}`} suppressHydrationWarning>
       <body>
-        {}
         <ThemeProvider>
-          {children}
+          {/* 🔹 Envuelve toda tu app en el AuthProvider */}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

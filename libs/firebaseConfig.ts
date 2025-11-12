@@ -38,7 +38,7 @@ function validateFirebaseConfig() {
 }
 
 // Validar configuración al cargar el módulo
-validateFirebaseConfig();
+//validateFirebaseConfig(); "descomentar"
 
 // Inicializar Firebase (evitar múltiples instancias)
 let app: FirebaseApp;
