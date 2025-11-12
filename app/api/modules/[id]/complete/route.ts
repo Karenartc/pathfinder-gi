@@ -5,12 +5,11 @@ import {
   verifyAuthToken,
 } from "@/libs/firebaseAdminConfig";
 
-/* ─────────────────────────────────────────────
-   POST /api/modules/[id]/complete
-   🔒 Protegido por token Firebase
-   Marca lección como completada, unifica progreso y suma puntos
-────────────────────────────────────────────── */
-export async function POST(request: Request, { params }: { params: { id: string } }) {
+export async function POST(
+  request: Request,
+  context: { params: Promise<{ id: string }> }
+) {
+  const { id } = await context.params;
   try {
     const token = extractTokenFromHeader(request);
     if (!token)
@@ -30,9 +29,9 @@ export async function POST(request: Request, { params }: { params: { id: string 
         { status: 400 }
       );
 
-    const moduleId = params.id;
+    const moduleId = id;
 
-    // 1️⃣ Leer todas las lecciones del módulo
+    // Leer todas las lecciones del módulo
     const lessonsSnap = await adminDb
       .collection("modules")
       .doc(moduleId)
@@ -40,7 +39,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       .get();
     const totalLessons = lessonsSnap.size || 1;
 
-    // 2️⃣ Buscar documento de progreso POR moduleId (no aleatorio)
+    // Progreso del usuario
     const progressRef = adminDb
       .collection("users")
       .doc(uid)
@@ -57,7 +56,6 @@ export async function POST(request: Request, { params }: { params: { id: string 
         : [];
     }
 
-    // 3️⃣ Agregar la lección completada si no existe
     if (!completedLessons.includes(lessonId)) {
       completedLessons.push(lessonId);
     }
@@ -67,7 +65,6 @@ export async function POST(request: Request, { params }: { params: { id: string 
       100
     );
 
-    // 4️⃣ Guardar progreso unificado
     await progressRef.set(
       {
         moduleId,
@@ -78,20 +75,16 @@ export async function POST(request: Request, { params }: { params: { id: string 
       { merge: true }
     );
 
-    // 5️⃣ Sumar puntos al usuario
+    // umar puntos al usuario
     const userRef = adminDb.collection("users").doc(uid);
     await adminDb.runTransaction(async (t) => {
       const userDoc = await t.get(userRef);
       if (!userDoc.exists) return;
       const userData = userDoc.data()!;
       const currentPoints = userData.totalPoints || 0;
-      const newPoints = currentPoints + 10; // cada lección vale 10 pts
+      const newPoints = currentPoints + 10;
       t.update(userRef, { totalPoints: newPoints });
     });
-
-    console.log(
-      `✅ Usuario ${uid} completó ${lessonId} (${progressPercent}% en ${moduleId})`
-    );
 
     return NextResponse.json({
       ok: true,
@@ -99,7 +92,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       progress: progressPercent,
     });
   } catch (err: any) {
-    console.error("❌ Error en /api/modules/[id]/complete:", err);
+    console.error("Error en /api/modules/[id]/complete:", err);
     return NextResponse.json(
       {
         ok: false,
