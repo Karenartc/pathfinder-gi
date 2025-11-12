@@ -1,20 +1,45 @@
-import { getLessonById, getCourseById } from "@/libs/data";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import LessonDetail from "@/app/main/courses/[courseId]/lesson/[lessonId]/LessonDetail";
+import { useAuth } from "@/contexts/AuthContext";
 
-export default async function LessonPage({
-  params,
-}: {
-  params: Promise<{ courseId: string; lessonId: string }>;
-}) {
+export default function LessonPage() {
+  const { user } = useAuth();
+  const { courseId, lessonId } = useParams();
+  const [exists, setExists] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const { courseId, lessonId } = await params;
+  useEffect(() => {
+    // Solo validar existencia: LessonDetail hará el fetch real
+    const check = async () => {
+      if (!user) return;
+      try {
+        const token = await user.getIdToken();
+        const res = await fetch(`/api/modules/${courseId}/lessons`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        const found = data?.module?.lessons?.find((l: any) => l.id === lessonId);
+        setExists(Boolean(found));
+      } catch {
+        setExists(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    check();
+  }, [user, courseId, lessonId]);
 
-  // Obtener curso y lección desde el mock data
-  const course = await getCourseById(courseId);
-  const lesson = await getLessonById(courseId, lessonId);
+  if (loading)
+    return (
+      <div style={{ display: "grid", placeItems: "center", height: "80vh" }}>
+        <p>Cargando lección...</p>
+      </div>
+    );
 
-  // Manejo básico si no se encuentra
-  if (!course || !lesson) {
+  if (!exists)
     return (
       <div
         style={{
@@ -27,6 +52,11 @@ export default async function LessonPage({
         <h2>Lección no encontrada</h2>
       </div>
     );
-  }
-  return <LessonDetail courseId={courseId} lessonId={lessonId} />;
+
+  return (
+    <LessonDetail
+      courseId={String(courseId)}
+      lessonId={String(lessonId)}
+    />
+  );
 }

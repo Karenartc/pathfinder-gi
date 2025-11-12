@@ -63,10 +63,18 @@ export type Notification = {
 };
 
 export type CourseLesson = {
+  id: string;
+  title: string;
+  description?: string; // opcional, por compatibilidad con mocks antiguos
+  subtitle?: string;    // Firestore: "Lección 1 de 4"
+  content?: string[];   // Firestore: array de párrafos
+  questions?: {
     id: string;
-    title: string;         // Ej: "¿Qué ramas tiene la Ingeniería Informática?"
-    description: string;   // Ej: "Especialidades, campo y futuro."
-    completed: boolean;
+    question: string;
+    options: string[];
+    correctIndex: number;
+  }[];
+  completed?: boolean;
 };
 
 export type CourseDetail = {
