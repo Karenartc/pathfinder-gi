@@ -90,7 +90,7 @@ export default function LessonDetail({ courseId, lessonId }: Props) {
       {/* Contenido principal */}
       <div className={styles.lessonContent}>
         <div className={styles.lessonTopHeader}>
-          <Link href={`/main/courses/${courseId}`} className={styles.backBtnTop}>
+          <Link href={`/main/courses`} className={styles.backBtnTop}>
             <ChevronRight size={18} style={{ transform: "rotate(180deg)" }} />{" "}
             Volver al curso
           </Link>

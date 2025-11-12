@@ -2,16 +2,18 @@
 
 import { useRef, useMemo } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { getAuth } from "firebase/auth";
 import styles from "./dashboard.module.css";
 import type { CourseDetail } from "@/libs/types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type Props = {
-  courses: CourseDetail[];
+    courses: CourseDetail[];
 };
 
 export default function CoursesSection({ courses }: Props) {
+    const router = useRouter();
     const scrollRef = useRef<HTMLDivElement>(null);
 
     // Filtrar solo cursos no completados
@@ -20,6 +22,7 @@ export default function CoursesSection({ courses }: Props) {
         [courses]
     );
 
+    // Scroll horizontal
     const scroll = (direction: "left" | "right") => {
         const container = scrollRef.current;
         if (!container) return;
@@ -30,29 +33,45 @@ export default function CoursesSection({ courses }: Props) {
         });
     };
 
-    // Ruta según progreso del curso
-    const getLessonPath = (course: CourseDetail): string => {
-        if (!course.lessons || course.lessons.length === 0) {
-        return `/main/courses/${course.id}`;
+    // Al hacer click en un curso: buscar primera lección no completada
+    const handleCourseClick = async (courseId: string) => {
+        try {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        if (!user) {
+            console.error("Usuario no autenticado");
+            return;
         }
 
-        if (course.progress === 100) {
-        const last = course.lessons[course.lessons.length - 1];
-        return `/main/courses/${course.id}/lesson/${last.id}`;
+        const token = await user.getIdToken();
+
+        const res = await fetch(`/api/modules/${courseId}/lessons`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const data = await res.json();
+
+        if (!data.ok) {
+            console.error("Error al cargar lecciones:", data.message);
+            return;
         }
 
-        if (course.progress === 0) {
-        const first = course.lessons[0];
-        return `/main/courses/${course.id}/lesson/${first.id}`;
-        }
+        const lessons = data.module.lessons;
 
-        const next = course.lessons.find((l) => !l.completed);
-        return `/main/courses/${course.id}/lesson/${next ? next.id : course.lessons[0].id}`;
+        // Buscar la primera no completada
+        const nextLesson = lessons.find((l: any) => !l.completed);
+        const targetLesson = nextLesson ?? lessons[lessons.length - 1];
+
+        // Redirigir a esa lección
+        router.push(`/main/courses/${courseId}/lesson/${targetLesson.id}`);
+        } catch (err) {
+        console.error("Error al redirigir al curso:", err);
+        }
     };
 
     return (
         <div className={styles.coursesWrapper}>
-        {/* Flechas navegación */}
+        {/* Flechas de navegación */}
         <button
             className={`${styles.arrowBtn} ${styles.left}`}
             onClick={() => scroll("left")}
@@ -69,10 +88,12 @@ export default function CoursesSection({ courses }: Props) {
             <div className={styles.coursesTrack}>
             {visibleCourses.length > 0 ? (
                 visibleCourses.map((c) => (
-                <Link
+                <div
                     key={c.id}
-                    href={getLessonPath(c)}
                     className={styles.courseBanner}
+                    onClick={() => handleCourseClick(c.id)}
+                    role="button"
+                    tabIndex={0}
                 >
                     <div className={styles.courseBannerMedia}>
                     <Image
@@ -100,7 +121,7 @@ export default function CoursesSection({ courses }: Props) {
                         <span className="caption">{c.progress}%</span>
                     </div>
                     </div>
-                </Link>
+                </div>
                 ))
             ) : (
                 <p className={styles.noCoursesMsg}>

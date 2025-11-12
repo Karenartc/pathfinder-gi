@@ -66,7 +66,7 @@ export async function GET(
           questions: data.questions || [],
           estimatedTimeMinutes: data.estimatedTimeMinutes || null,
           order: data.order ?? 0,
-          completed: isCompleted, // 👈 NUEVO
+          completed: isCompleted, 
         };
       })
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
@@ -83,7 +83,7 @@ export async function GET(
       },
     });
   } catch (err: any) {
-    console.error("❌ Error en /api/modules/[id]/lessons:", err);
+    console.error("Error en /api/modules/[id]/lessons:", err);
     return NextResponse.json(
       {
         ok: false,
