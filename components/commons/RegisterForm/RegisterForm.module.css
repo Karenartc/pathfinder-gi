@@ -49,12 +49,64 @@
 }
 
 .errorMessage {
-  background-color: #fee;
-  border: 1px solid #fcc;
-  color: #c33;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 16px;
-  font-size: 14px;
+  background-color: rgb(var(--error) / 0.1);
+  border: 1px solid rgb(var(--error) / 0.3);
+  color: rgb(var(--error));
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+  font-size: var(--fs-body-s);
   text-align: center;
+}
+
+/* Label para el select */
+.label {
+  display: block;
+  font-size: var(--fs-body-s);
+  font-weight: var(--fw-medium);
+  color: rgb(var(--color-on-surface));
+}
+
+/* Wrapper para el select */
+.inputWrapper {
+  width: 100%;
+}
+
+/* Estilos para el select */
+.select {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--fs-body);
+  border: 1px solid rgb(var(--color-outline-variant));
+  border-radius: var(--radius-input);
+  background-color: rgb(var(--color-surface));
+  color: rgb(var(--color-on-surface));
+  transition: border-color var(--duration-fast) var(--ease-standard);
+  font-family: inherit;
+}
+
+.select:focus {
+  outline: none;
+}
+
+.select:disabled {
+  background-color: rgb(var(--disabled-bg) / var(--disabled-bg-alpha));
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.selectError {
+  border-color: rgb(var(--error));
+}
+
+.select option {
+  padding: 0.5rem;
+}
+
+/* Texto de error */
+.errorText {
+  display: block;
+  color: rgb(var(--error));
+  font-size: var(--fs-body-s);
+  margin-top: var(--space-1);
 }
