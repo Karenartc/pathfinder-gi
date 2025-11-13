@@ -1,7 +1,10 @@
-'use client';
+"use client";
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth, db } from '@/libs/firebaseConfig';
+import { doc, getDoc } from "firebase/firestore";
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { ROUTES } from '@/libs/routes';
@@ -10,17 +13,17 @@ import { Eye, EyeOff } from 'lucide-react';
 import styles from './LoginForm.module.css';
 
 export default function LoginForm() {
-    const router = useRouter(); // Hook para navegación
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
-    const [isLoading, setIsLoading] = useState(false); // Estado de carga para deshabilitar el formulario
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = async(e: React.FormEvent) => {0
+    const handleSubmit = async(e: React.FormEvent) => {
         e.preventDefault();
 
-        setErrors({}); // Limpiar errores previos antes de validar nuevamente
+        setErrors({});
 
         const newErrors: typeof errors = {};
         if (!email) newErrors.email = 'Campo requerido';
@@ -33,62 +36,67 @@ export default function LoginForm() {
             return;
         }
 
-        // Lamada al BACKEND
-
-        setIsLoading(true); // Activar estado de carga
+        setIsLoading(true);
 
         try {
-            // Hacer petición POST al endpoint de login
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email,
-                    password,
-                }),
-            });
+            // Login con Firebase
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
 
-            const data = await response.json();
+            // Obtener token JWT
+            const token = await user.getIdToken(true);
 
-            // Si la respuesta no es exitosa, mostrar error
-            if (!response.ok) {
-                if (data.errors && Array.isArray(data.errors)) {
-                    setErrors({ general: data.errors.join(', ') });
-                } else {
-                    setErrors({ general: data.message || 'Error al iniciar sesión' });
-                }
-                return;
+            // OBTENER EL ROLE DESDE FIRESTORE
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            const userRole = userDoc.exists() ? userDoc.data()?.role : "student";
+
+            // GUARDAR TOKEN + ROLE EN COOKIE PARA EL MIDDLEWARE
+            document.cookie = `auth=${JSON.stringify({
+                token,
+                role: userRole
+            })}; path=/; max-age=3600; Secure; SameSite=Lax`;
+
+            // REDIRECCIÓN SEGÚN ROLE
+            if (userRole === "admin" || userRole === "tutor") {
+                router.push(ROUTES.admin);
+            } else {
+                router.push(ROUTES.userhome);
             }
 
-            // Login exitoso - Guardar datos en localStorage
-            console.log('Login exitoso:', data);
-
-            // Guardar token de autenticación
-            if (data.token) {
-                localStorage.setItem('authToken', data.token);
-            }
-
-            // Guardar información del usuario
-            if (data.user) {
-                localStorage.setItem('user', JSON.stringify(data.user));
-            }
-
-            // Redirigir a '' después del login exitoso
-            router.push(ROUTES.userhome); // Redirigir al home de usuario luego de iniciar sesión
-            
-        } catch (error) {
-            // Manejar errores de conexión
+        } catch (error: any) {
             console.error('Error en login:', error);
-            setErrors({ 
-                general: 'Error de conexión. Por favor, intenta nuevamente.' 
-            });
+
+            let errorMessage = 'Error al iniciar sesión.';
+
+            switch (error.code) {
+                case 'auth/invalid-credential':
+                case 'auth/wrong-password':
+                    errorMessage = 'Email o contraseña incorrectos';
+                    break;
+                case 'auth/user-not-found':
+                    errorMessage = 'No existe una cuenta con este email';
+                    break;
+                case 'auth/too-many-requests':
+                    errorMessage = 'Demasiados intentos fallidos. Intenta más tarde';
+                    break;
+                case 'auth/user-disabled':
+                    errorMessage = 'Esta cuenta ha sido deshabilitada';
+                    break;
+                case 'auth/invalid-email':
+                    errorMessage = 'Email inválido';
+                    break;
+                case 'auth/network-request-failed':
+                    errorMessage = 'Error de conexión. Verifica tu internet';
+                    break;
+                default:
+                    errorMessage = 'Error al iniciar sesión. Intenta nuevamente';
+            }
+
+            setErrors({ general: errorMessage });
+
         } finally {
-            // Desactivar estado de carga
             setIsLoading(false);
         }
-        // FIN DE LLAMADA AL BACKEND
     };
 
     return (
@@ -98,52 +106,47 @@ export default function LoginForm() {
                     {errors.general}
                 </div>
             )}    
-        <Input
-            type="email"
-            placeholder="Correo electrónico"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            error={errors.email}
-            fullWidth
-            required
-            disabled={isLoading} // Deshabilitar durante la carga
-        />
 
-        <Input
-            type={showPassword ? 'text' : 'password'}
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            error={errors.password}
-            rightAction={
-            <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className={styles.iconButton}
-                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                disabled={isLoading} // Deshabilitar durante la carga
-            >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
-            }
-            fullWidth
-            required
-            disabled={isLoading} // Deshabilitar durante la carga
-        />
+            <Input
+                type="email"
+                placeholder="Correo electrónico"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                error={errors.email}
+                fullWidth
+                required
+                disabled={isLoading}
+            />
 
-        <div className={styles.actions}>
-            <a href="#" className={styles.forgot}>
-            ¿Olvidaste tu contraseña?
-            </a>
-        </div>
+            <Input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Contraseña"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                error={errors.password}
+                rightAction={
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className={styles.iconButton}
+                        aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                        disabled={isLoading}
+                    >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                }
+                fullWidth
+                required
+                disabled={isLoading}
+            />
 
-        <Button type="submit" variant="primary" fullWidth disabled={isLoading}>
-            {isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
-        </Button>
+            <Button type="submit" variant="primary" fullWidth disabled={isLoading}>
+                {isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+            </Button>
 
-        <p className={styles.register}>
-            ¿No tienes cuenta? <Link href={ROUTES.register}>Regístrate</Link>
-        </p>
+            <p className={styles.register}>
+                ¿No tienes cuenta? <Link href={ROUTES.register}>Regístrate</Link>
+            </p>
         </form>
     );
 }

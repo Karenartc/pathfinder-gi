@@ -1,97 +1,161 @@
 "use client";
 
 import styles from "./admin.module.css";
-import {
-  getRankingGlobal,
-  getCoursesDetail,
-  getAchievements,
-  getNotifications,
-  getEvents,
-  getPlaces
-} from "@/libs/data/mock";
 import { useEffect, useState } from "react";
-import type { User, CourseDetail, Achievement, Notification, Event, Place } from "@/libs/types";
-import { Users, BookOpen, Trophy, Bell, MapPin, CalendarDays, Star } from "lucide-react";
+import { Users, BookOpen, CalendarDays, Star } from "lucide-react";
 import NavbarAdmin from "@/components/commons/NavbarAdmin";
 import Footer from "@/components/commons/Footer";
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   CartesianGrid,
   XAxis,
   YAxis,
   Tooltip,
-  BarChart,
-  Bar,
   ResponsiveContainer,
 } from "recharts";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function AdminPage() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [courses, setCourses] = useState<CourseDetail[]>([]);
-  const [events, setEvents] = useState<Event[]>([]);
+  const { user } = useAuth();
+  const [users, setUsers] = useState<any[]>([]);
+  const [courses, setCourses] = useState<any[]>([]);
+  const [events, setEvents] = useState<any[]>([]);
 
+  // ───────────────────────────────
+  // Cargar datos del backend admin
+  // ───────────────────────────────
   useEffect(() => {
-    async function load() {
-      const [u, c, a, n, e ] = await Promise.all([
-        getRankingGlobal(),
-        getCoursesDetail(),
-        getAchievements(),
-        getNotifications(),
-        getEvents(),
-        getPlaces(),
-      ]);
-      setUsers(u);
-      setCourses(c);
-      setEvents(e);
-    }
-    load();
-  }, []);
+    const load = async () => {
+      if (!user) return;
 
-  // ─────────── MÉTRICAS
+      try {
+        const token = await user.getIdToken();
+        const res = await fetch("/api/admin/dashboard", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const data = await res.json();
+        if (data.ok) {
+          setUsers(data.users);
+          setCourses(data.modules);
+          setEvents(data.events);
+        } else {
+          console.error("Error:", data.message);
+        }
+      } catch (err) {
+        console.error("❌ Error cargando dashboard:", err);
+      }
+    };
+
+    load();
+  }, [user]);
+
+  // ───────────────────────────────
+  // MÉTRICAS
+  // ───────────────────────────────
   const totalUsers = users.length;
-  const avgPoints = users.length ? Math.round(users.reduce((sum, u) => sum + u.points, 0) / users.length) : 0;
-  const avgCourseProgress = courses.length
-    ? Math.round(courses.reduce((sum, c) => sum + c.progress, 0) / courses.length)
+
+  const avgPoints = users.length
+    ? Math.round(
+        users.reduce((sum, u) => sum + (u.totalPoints || 0), 0) / users.length
+      )
     : 0;
+
+  const avgCourseProgress = courses.length
+    ? Math.round(
+        courses.reduce((sum, c) => sum + (c.progress || 0), 0) /
+          courses.length
+      )
+    : 0;
+
   const totalEvents = events.length;
 
-  // ─────────── PROMEDIO DE PUNTOS POR CARRERA
-  const pointsByCareer = users.reduce<Record<string, number[]>>((acc, user) => {
-    if (!acc[user.career || "Desconocido"]) acc[user.career || "Desconocido"] = [];
-    acc[user.career || "Desconocido"].push(user.points);
+  // ───────────────────────────────
+  // Normalizar carreras (sin desconocido)
+  // ───────────────────────────────
+
+  const normalizeCareer = (career: string) => {
+    if (!career) return null;
+
+    const clean = career.trim().toLowerCase();
+
+    if (clean.includes("informática")) return "Ingeniería Informática";
+    if (clean.includes("automatización")) return "Ingeniería en Automatización";
+    if (clean.includes("diseño")) return "Diseño Gráfico";
+    if (clean.includes("administración")) return "Administración de Empresas";
+
+    return null;
+  };
+
+  const pointsByCareer = users.reduce<Record<string, number[]>>((acc, u) => {
+    const norm = normalizeCareer(u.career);
+    if (!norm) return acc;
+
+    if (!acc[norm]) acc[norm] = [];
+    acc[norm].push(u.totalPoints || 0);
     return acc;
   }, {});
 
   const careerData = Object.entries(pointsByCareer).map(([career, points]) => ({
     carrera: career,
-    promedio: Math.round(points.reduce((sum, p) => sum + p, 0) / points.length),
+    promedio: Math.round(
+      points.reduce((sum, p) => sum + p, 0) / points.length
+    ),
   }));
 
-  // ─────────── KPIs
-  const kpis = [
-    { label: "Usuarios activos", value: totalUsers, icon: <Users /> },
-    { label: "Promedio de puntos", value: avgPoints, icon: <Star /> },
-    { label: "Avance promedio cursos", value: `${avgCourseProgress}%`, icon: <BookOpen /> },
-    { label: "Eventos próximos", value: totalEvents, icon: <CalendarDays /> },
+  // ───────────────────────────────
+  // Custom Tick (TIPADO CORRECTO)
+  // ───────────────────────────────
+  type TickProps = {
+    x: number;
+    y: number;
+    payload: { value: string };
+  };
 
-  ];
+  const CustomTick = ({ x, y, payload }: TickProps) => {
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text
+          x={0}
+          y={0}
+          dy={10}
+          textAnchor="end"
+          fontSize={12}
+          fontWeight={500}
+          fill="#aaa"
+          transform="rotate(-25)"
+        >
+          {payload.value}
+        </text>
+      </g>
+    );
+  };
 
-  const courseData = courses.map((c) => ({
-    name: c.title,
-    progreso: (c.lessons.filter((l) => l.completed).length / c.lessons.length) * 100,
-  }));
-
-  const topUsers = users.sort((a, b) => b.points - a.points).slice(0, 10);
+  // ───────────────────────────────
+  // TOP 10 usuarios
+  // ───────────────────────────────
+  const topUsers = [...users]
+    .sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0))
+    .slice(0, 10);
 
   return (
     <>
       <NavbarAdmin />
 
       <main className={styles.adminDashboard}>
-        {/* ───── KPIs principales ───── */}
+        {/* KPIs */}
         <section className={styles.kpiGrid}>
-          {kpis.map((kpi) => (
+          {[
+            { label: "Usuarios activos", value: totalUsers, icon: <Users /> },
+            { label: "Promedio de puntos", value: avgPoints, icon: <Star /> },
+            {
+              label: "Avance promedio cursos",
+              value: `${avgCourseProgress}%`,
+              icon: <BookOpen />,
+            },
+            { label: "Eventos próximos", value: totalEvents, icon: <CalendarDays /> },
+          ].map((kpi) => (
             <div key={kpi.label} className={styles.kpiCard}>
               <div className={styles.iconBox}>{kpi.icon}</div>
               <div>
@@ -102,39 +166,67 @@ export default function AdminPage() {
           ))}
         </section>
 
-        {/* ───── Gráficos ───── */}
+        {/* Gráficos */}
         <section className={styles.chartsRow}>
+          {/* PROGRESO DE CURSOS */}
           <div className={styles.chartCard}>
             <h3>Progreso de cursos</h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={courseData}>
+
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={courses}
+                margin={{ bottom: 70}}   // margen inferior extra para textos
+              >
                 <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                <XAxis dataKey="name" stroke="#aaa" />
+
+                <XAxis
+                  dataKey="title"
+                  stroke="#aaa"
+                  interval={0}
+                  tick={CustomTick}        // tu tick rotado
+                />
+
                 <YAxis stroke="#aaa" />
                 <Tooltip />
-                <Bar dataKey="progreso" fill="#c7923e" radius={[6, 6, 0, 0]} />
+
+                <Bar
+                  dataKey="progress"
+                  fill="#c7923e"
+                  radius={[6, 6, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
 
-          <section className={styles.chartCard}>
-          <h3>Promedio de puntos por carrera</h3>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart layout="vertical" data={careerData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-              <XAxis type="number" stroke="#aaa" />
-              <YAxis type="category" dataKey="carrera" stroke="#aaa" />
-              <Tooltip />
-              <Bar dataKey="promedio" fill="#c7923e" radius={[0, 6, 6, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+
+          {/* PROMEDIO POR CARRERA */}
+          <div className={styles.chartCard}>
+            <h3>Promedio de puntos por carrera</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart layout="vertical" data={careerData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                <XAxis type="number" stroke="#aaa" />
+                <YAxis
+                  type="category"
+                  dataKey="carrera"
+                  width={160}
+                  interval={0}
+                  tick={{ fontSize: 14, fontWeight: 500 }}
+                  stroke="#aaa"
+                />
+                <Tooltip wrapperStyle={{ fontSize: 14 }} />
+                <Bar
+                  dataKey="promedio"
+                  fill="#c7923e"
+                  radius={[0, 6, 6, 0]}
+                  barSize={24}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </section>
 
-        </section>
-
-        {/* ───── Promedio de puntos por carrera ───── */}
-        
-        {/* ───── Estudiantes recientes ───── */}
+        {/* TABLA */}
         <section className={styles.tableCard}>
           <h3>Estudiantes destacados</h3>
           <table className={styles.table}>
@@ -148,9 +240,9 @@ export default function AdminPage() {
             <tbody>
               {topUsers.map((u) => (
                 <tr key={u.id}>
-                  <td>{u.name}</td>
-                  <td>{u.career}</td>
-                  <td>{u.points}</td>
+                  <td>{u.fullName || u.name}</td>
+                  <td>{u.career || "—"}</td>
+                  <td>{u.totalPoints || 0}</td>
                 </tr>
               ))}
             </tbody>

@@ -1,0 +1,51 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal {
+  background: rgb(var(--color-surface));
+  color: rgb(var(--color-on-surface));
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-lg);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgb(var(--color-on-surface));
+}
+
+.content h3 {
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-2);
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.content p {
+  margin-bottom: var(--space-6);
+  line-height: 1.5;
+  text-align: left;
+}

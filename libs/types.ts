@@ -23,19 +23,7 @@ export type Course = {
     id: string;
     title: string;
     progress: number; // 0..100
-    image: string;    // Imagen ilustrativa del módulo
-};
-
-/* ────────────────────────────────────────────────
-Evento 
-──────────────────────────────────────────────── */
-export type Event = {
-    id: string;
-    title: string;
-    place: string;      
-    dateISO: string; 
-    image: string;   
-    description?: string; 
+    imageUrl: string;    // Imagen ilustrativa del módulo
 };
 
 /* ────────────────────────────────────────────────
@@ -75,10 +63,18 @@ export type Notification = {
 };
 
 export type CourseLesson = {
+  id: string;
+  title: string;
+  description?: string; // opcional, por compatibilidad con mocks antiguos
+  subtitle?: string;    // Firestore: "Lección 1 de 4"
+  content?: string[];   // Firestore: array de párrafos
+  questions?: {
     id: string;
-    title: string;         // Ej: "¿Qué ramas tiene la Ingeniería Informática?"
-    description: string;   // Ej: "Especialidades, campo y futuro."
-    completed: boolean;
+    question: string;
+    options: string[];
+    correctIndex: number;
+  }[];
+  completed?: boolean;
 };
 
 export type CourseDetail = {
@@ -105,3 +101,43 @@ export type LessonDetail = {
     content: string[];
     questions?: LessonQuestion[]; 
 };
+
+// libs/types.ts
+
+export interface Module {
+  id: string;
+  name: string; // (antes "title")
+  description?: string;
+  imageUrl?: string;
+  isActive: boolean;
+  order: number;
+  createdAt?: string;
+}
+
+export interface LessonProgress {
+  id: string;
+  moduleId: string;
+  progress: number;
+  updatedAt?: string;
+}
+
+export interface CourseWithProgress {
+  id: string;
+  title: string;
+  image: string;
+  progress: number;
+  lessons: any[];
+}
+
+export interface Event {
+  id: string;
+  title: string;
+  description?: string;
+  imageUrl?: string;
+  place?: string;
+  dateISO: string;
+  startAt?: string;
+  endAt?: string;
+  isActive: boolean;
+  creatorId?: string;
+}

@@ -5,13 +5,22 @@ import styles from "./NavbarAdmin.module.css";
 import { LogOut, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext"; 
 
 export default function NavbarAdmin() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const { userData } = useAuth();   
+  const { signOut } = useAuth();    
 
-  const handleLogout = () => {
-    router.push("/");
+  const handleLogout = async () => {
+    try {
+      await signOut(); // ← Cierra Firebase Auth
+      document.cookie = "auth=; path=/; max-age=0;"; 
+      router.push("/");
+    } catch (err) {
+      console.error("Error al cerrar sesión:", err);
+    }
   };
 
   return (
@@ -32,13 +41,19 @@ export default function NavbarAdmin() {
         {/* Perfil */}
         <div className={styles.profile} onClick={() => setOpen(!open)}>
           <Image
-            src="/icons/PathFox-logo-512x512.png"
+            src={userData?.avatarUrl || "/icons/PathFox-logo-512x512.png"}
             alt="Admin"
             width={36}
             height={36}
             className={styles.avatar}
           />
-          <span className={styles.username}>Administrador</span>
+
+          <span className={styles.username}>
+            {userData?.fullName ||
+             userData?.firstName ||
+             "Admin"}
+          </span>
+
           <ChevronDown size={16} />
         </div>
 

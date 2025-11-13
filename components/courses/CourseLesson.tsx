@@ -13,6 +13,9 @@ type Props = {
 
 export default function CourseLesson({ lesson, courseId }: Props) {
   const Icon = lesson.completed ? CheckCircle2 : Info;
+  const description =
+    lesson.description || lesson.subtitle || lesson.content?.[0] || "Lección disponible";
+
   return (
     <Link
       href={ROUTES.detailsCourse.courseLesson(courseId, lesson.id)}
@@ -21,7 +24,7 @@ export default function CourseLesson({ lesson, courseId }: Props) {
       <Icon className={styles.lessonIcon} />
       <div className={styles.lessonInfo}>
         <h3>{lesson.title}</h3>
-        <p>{lesson.description}</p>
+        <p>{description}</p>
       </div>
     </Link>
   );
