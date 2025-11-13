@@ -1,71 +1,63 @@
-import { NextResponse } from "next/server";
-import { db } from "@/libs/firebaseConfig";
-import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
+// Endpoint para obtener el ranking global usando Firebase Admin SDK
 
-/**
- * GET /api/ranking/global
- * 
- * Retorna el ranking global de todos los estudiantes ordenados por totalPoints.
- * Calcula dinámicamente la posición de cada estudiante dentro de su carrera (careerCount).
- * 
- * Query params opcionales:
- * - limit: número máximo de resultados (default: 100)
- * 
- * Respuesta:
- * {
- *   message: string,
- *   ranking: User[],
- *   count: number
- * }
- */
+import { NextResponse } from "next/server";
+import { adminAuth, adminDb, extractTokenFromHeader } from "@/libs/firebaseAdminConfig";
+
 export async function GET(request: Request) {
   try {
-    // 1. Obtener parámetros de query
-    const { searchParams } = new URL(request.url);
-    const limitParam = searchParams.get("limit");
-    const maxResults = limitParam ? parseInt(limitParam) : 100;
+    // 1. Verificar el token del usuario
+    const authHeader = request.headers.get("Authorization");
+    const token = extractTokenFromHeader(authHeader);
+    
+    if (!token) {
+      return NextResponse.json(
+        { ok: false, message: "No se proporcionó token de autenticación." },
+        { status: 401 }
+      );
+    }
 
-    // 2. Obtener TODOS los estudiantes ordenados por puntos
-    const usersRef = collection(db, "users");
-    const q = query(
-      usersRef,
-      where("role", "==", "student"),
-      orderBy("totalPoints", "desc")
-    );
+    // 2. Verificar el token
+    let decodedToken;
+    try {
+      decodedToken = await adminAuth.verifyIdToken(token);
+      console.log(`✅ Usuario autenticado en ranking global: ${decodedToken.uid}`);
+    } catch (error: any) {
+      console.error("❌ Error al verificar token:", error);
+      return NextResponse.json(
+        { 
+          ok: false,
+          message: "Token inválido o expirado.",
+        },
+        { status: 403 }
+      );
+    }
 
-    const querySnapshot = await getDocs(q);
+    // 3. Obtener todos los usuarios ordenados por puntos (usando Admin SDK)
+    const usersRef = adminDb.collection("users");
+    const usersQuery = usersRef
+      .orderBy("totalPoints", "desc")
+      .limit(100); // Top 100 usuarios
 
-    // 3. Agrupar usuarios por carrera para calcular careerCount
-    const usersByCareer: Record<string, number> = {};
+    const usersSnapshot = await usersQuery.get();
+    console.log(`🏆 Usuarios en ranking global: ${usersSnapshot.size}`);
 
-    // 4. Formatear el ranking con posiciones calculadas
-    const allUsers = querySnapshot.docs.map((doc, index) => {
+    // 4. Formatear el ranking con posiciones
+    const ranking = usersSnapshot.docs.map((doc, index) => {
       const data = doc.data();
-      const career = data.career || "Sin carrera";
-
-      // Incrementar contador de posición por carrera
-      if (!usersByCareer[career]) {
-        usersByCareer[career] = 0;
-      }
-      usersByCareer[career]++;
-
       return {
         id: doc.id,
-        name: data.fullName || `${data.firstName || ""} ${data.lastName || ""}`.trim() || "Usuario",
-        career: career,
-        careerCount: usersByCareer[career], // Posición dentro de su carrera
-        points: data.totalPoints || 0,
-        globalRank: index + 1, // Posición global
+        globalRank: index + 1, // Posición en el ranking (1, 2, 3...)
+        fullName: data.fullName || `${data.firstName || ""} ${data.lastName || ""}`.trim() || "Usuario",
+        career: data.career || "Sin carrera",
+        totalPoints: data.totalPoints || 0,
         avatarUrl: data.avatarUrl || "/images/fox-avatar.png",
       };
     });
 
-    // 5. Aplicar límite si se especificó
-    const ranking = maxResults ? allUsers.slice(0, maxResults) : allUsers;
-
-    // 6. Respuesta exitosa
+    // 5. Respuesta exitosa
     return NextResponse.json(
       {
+        ok: true,
         message: "Ranking global obtenido exitosamente",
         ranking: ranking,
         count: ranking.length,
@@ -74,11 +66,25 @@ export async function GET(request: Request) {
     );
 
   } catch (error: any) {
-    console.error("Error al obtener ranking global:", error);
+    console.error("❌ Error en API /api/ranking/global:", error);
+
+    // Error específico de índice faltante
+    if (error.code === 'failed-precondition' || error.message?.includes('index')) {
+      return NextResponse.json(
+        {
+          ok: false,
+          message: "Se requiere crear un índice en Firestore.",
+          error: "Missing index",
+          indexUrl: error.message.match(/https:\/\/[^\s]+/)?.[0] || null,
+        },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(
       {
-        message: "Error al obtener el ranking global",
+        ok: false,
+        message: "Error al obtener el ranking global.",
         error: error.message,
       },
       { status: 500 }

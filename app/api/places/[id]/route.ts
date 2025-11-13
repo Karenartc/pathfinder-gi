@@ -9,33 +9,33 @@ type RouteParams = {
 
 export async function GET(request: Request, { params }: RouteParams) {
   try {
-    // 1. Verificar el token del usuario
+
+    const { id } = await params;
+    console.log("🔍 ID recibido en endpoint:", id);
+
+    // 1. Verificar token
     const authHeader = request.headers.get("Authorization");
     const token = extractTokenFromHeader(authHeader);
     
     if (!token) {
       return NextResponse.json(
-        { ok: false, message: "No se proporcionó token de autenticación." },
+        { ok: false, message: "Token no proporcionado." },
         { status: 401 }
       );
     }
 
-    // 2. Verificar el token
     let decodedToken;
     try {
       decodedToken = await adminAuth.verifyIdToken(token);
-    } catch (error: any) {
+    } catch (error) {
       return NextResponse.json(
-        { 
-          ok: false,
-          message: "Token inválido o expirado.",
-        },
+        { ok: false, message: "Token inválido." },
         { status: 403 }
       );
     }
 
     // 3. Obtener el ID del lugar
-    const { id } = await params;
+    //const { id } = await params;
 
     // 4. Buscar el documento en Firestore usando Admin SDK
     const placeRef = adminDb.collection("pointsOfInterest").doc(id);

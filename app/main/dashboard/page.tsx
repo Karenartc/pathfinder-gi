@@ -49,7 +49,7 @@ export default function DashboardPage() {
                 console.log("🔑 Token obtenido exitosamente");
 
                 // Hacer las peticiones en paralelo con el token
-                const [coursesRes, eventsRes] = await Promise.all([
+                const [coursesRes, eventsRes, globalRankingRes, careerRankingRes] = await Promise.all([
                     fetch('/api/modules/progress', {
                         headers: {
                             'Authorization': `Bearer ${token}`,
@@ -61,25 +61,23 @@ export default function DashboardPage() {
                         },
                     }),
                     // Rankings comentados temporalmente - los arreglaremos después
-                    // fetch('/api/ranking/global', {
-                    //     headers: {
-                    //         'Authorization': `Bearer ${token}`,
-                    //     },
-                    // }),
-                    // fetch(`/api/ranking/career?career=${encodeURIComponent(userData.career || '')}`, {
-                    //     headers: {
-                    //         'Authorization': `Bearer ${token}`,
-                    //     },
-                    // }),
+                    fetch('/api/ranking/global', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                        },
+                    }),
+                    fetch(`/api/ranking/career?career=${encodeURIComponent(userData.career || '')}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                        },
+                    }),
                 ]);
 
                 // Parsear respuestas
                 const coursesData = await coursesRes.json();
                 const eventsData = await eventsRes.json();
-                
-                // Rankings temporalmente deshabilitados
-                const globalRankingData = { ok: false, ranking: [] };
-                const careerRankingData = { ok: false, ranking: [] };
+                const globalRankingData = await globalRankingRes.json();
+                const careerRankingData = await careerRankingRes.json();
 
                 // Verificar y actualizar cursos
                 if (coursesRes.ok && coursesData.ok) {
@@ -100,16 +98,22 @@ export default function DashboardPage() {
                 }
 
                 // Calcular ranking del usuario (temporal)
-                if (globalRankingData.ok && careerRankingData.ok) {
+                if (globalRankingRes.ok && globalRankingData.ok && careerRankingRes.ok && careerRankingData.ok) {
+                    console.log("🏆 Rankings obtenidos exitosamente");
+                    
+                    // Buscar la posición del usuario en ambos rankings
                     const globalUser = globalRankingData.ranking?.find((u: any) => u.id === user.uid);
                     const careerUser = careerRankingData.ranking?.find((u: any) => u.id === user.uid);
 
                     setUserRanking({
                         globalRank: globalUser?.globalRank || 0,
-                        careerRank: careerUser?.careerCount || 0,
+                        careerRank: careerUser?.careerRank || careerUser?.careerCount || 0,
                     });
+
+                    console.log("📊 Posición global:", globalUser?.globalRank || 0);
+                    console.log("📊 Posición carrera:", careerUser?.careerRank || 0);
                 } else {
-                    // Temporal: rankings en 0
+                    console.warn("⚠️ Error al cargar rankings");
                     setUserRanking({ globalRank: 0, careerRank: 0 });
                 }
 

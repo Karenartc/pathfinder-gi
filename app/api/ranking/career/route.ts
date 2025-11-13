@@ -1,98 +1,81 @@
+// Endpoint para obtener el ranking por carrera usando Firebase Admin SDK
+
 import { NextResponse } from "next/server";
-import { db } from "@/libs/firebaseConfig";
-import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
-
-/**
- * GET /api/ranking/career
- * 
- * Retorna el ranking de estudiantes de una carrera específica.
- * Los estudiantes están ordenados por totalPoints dentro de su carrera.
- * 
- * Query params requeridos:
- * - career: nombre de la carrera (ej: "Ingeniería Informática")
- * 
- * Query params opcionales:
- * - limit: número máximo de resultados (default: 100)
- * 
- * Respuesta:
- * {
- *   message: string,
- *   career: string,
- *   ranking: User[],
- *   count: number
- * }
- */
-
-// Lista de carreras válidas en el sistema
-const VALID_CAREERS = [
-  "Diseño Gráfico",
-  "Ingeniería Informática",
-  "Ingeniería Automatización",
-  "Administración de Empresas",
-];
+import { adminAuth, adminDb, extractTokenFromHeader } from "@/libs/firebaseAdminConfig";
 
 export async function GET(request: Request) {
   try {
-    // 1. Obtener parámetros de query
+    // 1. Verificar el token del usuario
+    const authHeader = request.headers.get("Authorization");
+    const token = extractTokenFromHeader(authHeader);
+    
+    if (!token) {
+      return NextResponse.json(
+        { ok: false, message: "No se proporcionó token de autenticación." },
+        { status: 401 }
+      );
+    }
+
+    // 2. Verificar el token
+    let decodedToken;
+    try {
+      decodedToken = await adminAuth.verifyIdToken(token);
+      console.log(`✅ Usuario autenticado en ranking por carrera: ${decodedToken.uid}`);
+    } catch (error: any) {
+      console.error("❌ Error al verificar token:", error);
+      return NextResponse.json(
+        { 
+          ok: false,
+          message: "Token inválido o expirado.",
+        },
+        { status: 403 }
+      );
+    }
+
+    // 3. Obtener el parámetro de carrera desde la URL
     const { searchParams } = new URL(request.url);
     const career = searchParams.get("career");
-    const limitParam = searchParams.get("limit");
-    const maxResults = limitParam ? parseInt(limitParam) : 100;
 
-    // 2. Validar que se proporcionó el parámetro career
     if (!career) {
       return NextResponse.json(
-        {
-          message: "El parámetro 'career' es requerido",
-          validCareers: VALID_CAREERS,
+        { 
+          ok: false,
+          message: "Se requiere especificar una carrera." 
         },
         { status: 400 }
       );
     }
 
-    // 3. Validar que la carrera sea válida (opcional pero recomendado)
-    if (!VALID_CAREERS.includes(career)) {
-      return NextResponse.json(
-        {
-          message: `La carrera '${career}' no es válida`,
-          validCareers: VALID_CAREERS,
-        },
-        { status: 400 }
-      );
-    }
+    console.log(`🎓 Buscando ranking para carrera: ${career}`);
 
-    // 4. Consultar usuarios de la carrera específica
-    const usersRef = collection(db, "users");
-    const q = query(
-      usersRef,
-      where("role", "==", "student"),
-      where("career", "==", career),
-      orderBy("totalPoints", "desc")
-    );
+    // 4. Obtener usuarios de la carrera ordenados por puntos (usando Admin SDK)
+    const usersRef = adminDb.collection("users");
+    const usersQuery = usersRef
+      .where("career", "==", career)
+      .orderBy("totalPoints", "desc")
+      .limit(100); // Top 100 de la carrera
 
-    const querySnapshot = await getDocs(q);
+    const usersSnapshot = await usersQuery.get();
+    console.log(`🏆 Usuarios en ranking de ${career}: ${usersSnapshot.size}`);
 
-    // 5. Formatear el ranking
-    const allUsers = querySnapshot.docs.map((doc, index) => {
+    // 5. Formatear el ranking con posiciones por carrera
+    const ranking = usersSnapshot.docs.map((doc, index) => {
       const data = doc.data();
-      
       return {
         id: doc.id,
-        name: data.fullName || `${data.firstName || ""} ${data.lastName || ""}`.trim() || "Usuario",
-        career: data.career || career,
-        careerCount: index + 1, // Posición dentro de esta carrera
-        points: data.totalPoints || 0,
-        globalRank: 0, // Se puede calcular después si se necesita
+        careerRank: index + 1, // Posición en el ranking de la carrera
+        careerCount: index + 1, // Alias para compatibilidad
+        fullName: data.fullName || `${data.firstName || ""} ${data.lastName || ""}`.trim() || "Usuario",
+        career: data.career || "Sin carrera",
+        totalPoints: data.totalPoints || 0,
         avatarUrl: data.avatarUrl || "/images/fox-avatar.png",
       };
     });
 
-    // 6. Aplicar límite si se especificó
-    const ranking = maxResults ? allUsers.slice(0, maxResults) : allUsers;
-
-    // 7. Respuesta exitosa
+    // 6. Respuesta exitosa
     return NextResponse.json(
       {
+        ok: true,
         message: `Ranking de ${career} obtenido exitosamente`,
         career: career,
         ranking: ranking,
@@ -102,15 +85,16 @@ export async function GET(request: Request) {
     );
 
   } catch (error: any) {
-    console.error("Error al obtener ranking por carrera:", error);
+    console.error("❌ Error en API /api/ranking/career:", error);
 
-    // Manejar error específico de índice compuesto
-    if (error.code === "failed-precondition") {
+    // Error específico de índice faltante
+    if (error.code === 'failed-precondition' || error.message?.includes('index')) {
       return NextResponse.json(
         {
-          message: "Error de configuración de Firestore",
-          error: "Se requiere crear un índice compuesto. Revisa la consola de Firebase.",
-          details: error.message,
+          ok: false,
+          message: "Se requiere crear un índice en Firestore.",
+          error: "Missing index",
+          indexUrl: error.message.match(/https:\/\/[^\s]+/)?.[0] || null,
         },
         { status: 500 }
       );
@@ -118,7 +102,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json(
       {
-        message: "Error al obtener el ranking por carrera",
+        ok: false,
+        message: "Error al obtener el ranking por carrera.",
         error: error.message,
       },
       { status: 500 }
