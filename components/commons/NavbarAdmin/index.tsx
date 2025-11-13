@@ -10,13 +10,17 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function NavbarAdmin() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const { userData } = useAuth();       
+  const { userData } = useAuth();   
+  const { signOut } = useAuth();    
 
-  const handleLogout = () => {
-    // borrar cookie de auth (IMPORTANTE)
-    document.cookie = "auth=; path=/; max-age=0;";
-    localStorage.clear();
-    router.push("/");
+  const handleLogout = async () => {
+    try {
+      await signOut(); // ← Cierra Firebase Auth
+      document.cookie = "auth=; path=/; max-age=0;"; 
+      router.push("/");
+    } catch (err) {
+      console.error("Error al cerrar sesión:", err);
+    }
   };
 
   return (

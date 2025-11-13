@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { ROUTES } from "@/libs/routes";
 
 export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
@@ -9,8 +10,8 @@ export function middleware(request: NextRequest) {
 
   // Si no hay cookie → login
   if (!authCookie) {
-    if (!url.pathname.startsWith("/login") && !url.pathname.startsWith("/register"))
-      return NextResponse.redirect(new URL("/login", request.url));
+    if (!url.pathname.startsWith(ROUTES.login) && !url.pathname.startsWith("/register"))
+      return NextResponse.redirect(new URL(ROUTES.login , request.url));
     return NextResponse.next();
   }
 
@@ -19,7 +20,7 @@ export function middleware(request: NextRequest) {
   try {
     auth = JSON.parse(authCookie);
   } catch {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL(ROUTES.login, request.url));
   }
 
   const role = auth.role;
