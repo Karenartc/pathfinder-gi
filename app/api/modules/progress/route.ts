@@ -26,7 +26,6 @@ export async function GET(request: Request) {
       .get();
 
     if (progressSnap.empty) {
-      console.log("ℹ️ Usuario sin progreso registrado:", uid);
       return NextResponse.json({ ok: true, count: 0, courses: [] });
     }
 
@@ -59,7 +58,6 @@ export async function GET(request: Request) {
       };
     });
 
-    console.log(`✅ Cursos cargados para UID ${uid}: ${courses.length}`);
     return NextResponse.json({ ok: true, count: courses.length, courses });
   } catch (err: any) {
     console.error("❌ Error en /api/modules/progress:", err);

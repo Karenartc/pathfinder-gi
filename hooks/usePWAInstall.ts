@@ -23,11 +23,9 @@ export default function usePWAInstall() {
         e.preventDefault();
         setDeferredPrompt(e);
         setIsInstallable(true);
-        console.log('Evento beforeinstallprompt capturado');
         };
 
         const handleAppInstalled = () => {
-        console.log('PWA instalada');
         setIsInstallable(false);
         setIsStandalone(true);
         };
@@ -46,12 +44,6 @@ if (!deferredPrompt) return null;
 
     deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
-
-        if (outcome === 'accepted') {
-        console.log('Usuario instaló la PWA');
-        } else {
-        console.log('Usuario canceló la instalación');
-        }
 
         setDeferredPrompt(null);
         setIsInstallable(false);

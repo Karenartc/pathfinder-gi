@@ -1,46 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import styles from "./notifications.module.css";
-import { getNotifications } from "@/libs/data";
-import type { Notification } from "@/libs/types";
 import NotificationItem from "./NotificationItem";
 import { X } from "lucide-react";
+import { useNotifications } from "@/hooks/useNotifications";
 
 type Props = {
   open: boolean;
   onClose: () => void;
-  onUpdateUnread: (hasUnread: boolean) => void;
 };
 
-export default function NotificationsModal({ open, onClose, onUpdateUnread }: Props) {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+export default function NotificationsModal({ open, onClose }: Props) {
+  const {
+    notifications,
+    loading,
+    markAsRead,
+  } = useNotifications();
 
-  useEffect(() => {
-    if (open) {
-      getNotifications().then((data) => {
-        const unreadOnly = data.filter((n) => !n.read);
-        const sorted = unreadOnly.sort((a, b) =>
-          a.dateISO < b.dateISO ? 1 : -1
-        );
-        const limited = sorted.slice(0, 5);
-        setNotifications(limited);
-      });
-    }
-  }, [open]);
+  // Filtrar solo las no leídas y limitar a 5
+  const unreadNotifications = notifications
+    .filter((n) => !n.read)
+    .sort((a, b) => (a.dateISO < b.dateISO ? 1 : -1))
+    .slice(0, 5);
 
-  useEffect(() => {
-    onUpdateUnread(notifications.some((n) => !n.read));
-  }, [notifications, onUpdateUnread]);
+  // IMPORTANTE: NO EXISTE NINGÚN useEffect AQUÍ
 
-
-  const handleMarkAsRead = (id: string, link?: string) => {
-    setNotifications((prev) => {
-      const updated = prev.filter((n) => n.id !== id); 
-      onUpdateUnread(updated.some((n) => !n.read));
-      return updated;
-    });
-
+  const handleNotificationClick = async (id: string, link?: string) => {
+    await markAsRead(id);
     if (link) window.open(link, "_blank");
   };
 
@@ -48,10 +34,7 @@ export default function NotificationsModal({ open, onClose, onUpdateUnread }: Pr
 
   return (
     <div className={styles.backdrop} onClick={onClose}>
-      <div
-        className={styles.modal}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <header className={styles.header}>
           <h3>Notificaciones</h3>
           <button onClick={onClose} className={styles.closeBtn}>
@@ -60,12 +43,14 @@ export default function NotificationsModal({ open, onClose, onUpdateUnread }: Pr
         </header>
 
         <section className={styles.list}>
-          {notifications.length > 0 ? (
-            notifications.map((n) => (
+          {loading ? (
+            <p className={styles.empty}>Cargando notificaciones...</p>
+          ) : unreadNotifications.length > 0 ? (
+            unreadNotifications.map((n) => (
               <NotificationItem
                 key={n.id}
                 notification={n}
-                onClick={() => handleMarkAsRead(n.id,  n.link)}
+                onClick={() => handleNotificationClick(n.id, n.link)}
               />
             ))
           ) : (

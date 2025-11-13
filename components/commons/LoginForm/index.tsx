@@ -140,12 +140,6 @@ export default function LoginForm() {
                 disabled={isLoading}
             />
 
-            <div className={styles.actions}>
-                <a href="#" className={styles.forgot}>
-                    ¿Olvidaste tu contraseña?
-                </a>
-            </div>
-
             <Button type="submit" variant="primary" fullWidth disabled={isLoading}>
                 {isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
             </Button>

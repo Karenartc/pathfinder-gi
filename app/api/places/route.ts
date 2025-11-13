@@ -18,7 +18,6 @@ export async function GET(request: Request) {
     let decodedToken;
     try {
       decodedToken = await adminAuth.verifyIdToken(token);
-      console.log(`Usuario autenticado en /api/places: ${decodedToken.uid}`);
     } catch (error: any) {
       console.error("Error al verificar token:", error);
       return NextResponse.json(
@@ -35,7 +34,6 @@ export async function GET(request: Request) {
     const placesQuery = placesRef.where("isActive", "==", true);
 
     const querySnapshot = await placesQuery.get();
-    console.log(`📍 Lugares encontrados: ${querySnapshot.size}`);
 
     // 4. Formatear los lugares
     const places = querySnapshot.docs.map((doc) => {

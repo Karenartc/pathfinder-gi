@@ -1,16 +1,10 @@
 import { NextResponse } from "next/server";
 import { adminDb, extractTokenFromHeader, verifyAuthToken } from "@/libs/firebaseAdminConfig";
 
-/* ─────────────────────────────────────────────
-   GET /api/user/profile
-   🔒 Protegido por token Firebase
-   Devuelve los datos del usuario autenticado
-────────────────────────────────────────────── */
 export async function GET(request: Request) {
   try {
     // 1️⃣ Verificar autenticación (misma lógica que events/progress)
     const token = extractTokenFromHeader(request);
-    console.log("🔍 Token recibido:", token ? "✅ sí" : "❌ no");
     if (!token) {
       return NextResponse.json({ ok: false, message: "No token" }, { status: 401 });
     }

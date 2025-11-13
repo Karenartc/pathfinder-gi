@@ -39,7 +39,6 @@ export default function DashboardPage() {
       if (!user) return;
       try {
         const token = await user.getIdToken();
-        console.log("🔑 Token obtenido:", token.substring(0, 20) + "...");
 
         // Fetch simultáneo de backend real
         const [profileRes, coursesRes, eventsRes] = await Promise.all([
@@ -58,10 +57,9 @@ export default function DashboardPage() {
         const coursesData = await coursesRes.json();
         const eventsData = await eventsRes.json();
 
-        // 🔹 Perfil del usuario
+        // Perfil del usuario
         if (profileRes.ok && profileData.ok) {
             const userInfo = profileData.user || profileData;
-            console.log("👤 Perfil cargado:", userInfo.fullName);
             setUserProfile({
             id: userInfo.uid,
             name: userInfo.fullName || "Usuario",
@@ -77,21 +75,21 @@ export default function DashboardPage() {
             },
             });
         } else {
-            console.error("❌ Error perfil:", profileData.message);
+            console.error("Error perfil:", profileData.message);
         }
-        // 🔹 Cursos
+        // Cursos
         if (coursesRes.ok && coursesData.ok) {
           setCourses(coursesData.courses || []);
         }
 
-        // 🔹 Eventos
+        // Eventos
         if (eventsRes.ok && eventsData.ok) {
           setEvents(eventsData.events || []);
         }
 
         setIsLoading(false);
       } catch (err: any) {
-        console.error("❌ Error cargando dashboard:", err);
+        console.error("Error cargando dashboard:", err);
         setError(err.message || "Error al cargar datos.");
         setIsLoading(false);
       }

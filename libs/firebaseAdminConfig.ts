@@ -23,7 +23,6 @@ export function extractTokenFromHeader(request: Request): string | null {
     headers["AUTHORIZATION"];
 
   if (!authHeader) {
-    console.log("⚠️ No se encontró header Authorization:", headers);
     return null;
   }
 

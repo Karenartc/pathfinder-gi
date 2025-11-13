@@ -110,3 +110,20 @@
   font-size: var(--fs-body-s);
   margin-top: var(--space-1);
 }
+
+.termsText {
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgb(var(--color-on-surface-variant));
+  margin-bottom: var(--space-4);
+}
+
+.termsLink {
+  background: none;
+  border: none;
+  color: rgb(var(--color-primary));
+  cursor: pointer;
+  text-decoration: none;
+  padding: 0;
+  font-size: 0.9rem;
+}

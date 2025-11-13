@@ -20,6 +20,7 @@ import { ROUTES } from '@/libs/routes';
 import Link from 'next/link';
 import { Eye, EyeOff } from 'lucide-react';
 import styles from './RegisterForm.module.css';
+import TermsModal from "@/components/modals/TermsModal";
 
 // Carreras válidas del sistema
 const VALID_CAREERS = [
@@ -46,6 +47,7 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Estado de carga
+  const [showTerms, setShowTerms] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -79,7 +81,7 @@ export default function RegisterForm() {
     setIsLoading(true);
 
     try {
-      // 1️⃣ Crear usuario en Firebase Auth
+      // Crear usuario en Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         form.email,
@@ -89,7 +91,7 @@ export default function RegisterForm() {
       const user = userCredential.user;
       const fullName = `${form.firstName} ${form.lastName}`;
 
-      // 2️⃣ Crear documento base en Firestore
+      // Crear documento base en Firestore
       const userRef = doc(db, 'users', user.uid);
       await setDoc(userRef, {
         uid: user.uid,
@@ -102,7 +104,7 @@ export default function RegisterForm() {
         birthDate: form.birthDate,
         career: form.career,
         role: 'student',
-        totalPoints: 10, // 🔹 10 puntos por el logro inicial
+        totalPoints: 10, //10 puntos por el logro inicial
         avatarUrl: '/images/fox-avatar.png',
         preferences: {
           darkMode: false,
@@ -112,7 +114,7 @@ export default function RegisterForm() {
         updatedAt: new Date().toISOString(),
       });
 
-      // 3️⃣ Achievement inicial "Comenzar la Aventura"
+      // Achievement inicial "Comenzar la Aventura"
       const achievementRef = doc(
         collection(db, 'users', user.uid, 'userAchievements')
       );
@@ -126,7 +128,7 @@ export default function RegisterForm() {
         awardedAt: serverTimestamp(),
       });
 
-      // 4️⃣ Notificación por ese achievement
+      // 4Notificación por ese achievement
       const notifWelcomeRef = doc(
         collection(db, 'users', user.uid, 'notifications')
       );
@@ -140,7 +142,7 @@ export default function RegisterForm() {
         createdAt: serverTimestamp(),
       });
 
-      // 5️⃣ Notificaciones por eventos activos
+      // Notificaciones por eventos activos
       const eventsQuery = query(
         collection(db, 'events'),
         where('isActive', '==', true)
@@ -173,7 +175,7 @@ export default function RegisterForm() {
 
       await Promise.all(eventNotifPromises);
 
-      // 6️⃣ Asignar 5 cursos con progreso 0 (lessonProgress)
+      // Asignar 5 cursos con progreso 0 (lessonProgress)
       const modulesSnap = await getDocs(collection(db, 'modules'));
 
       const lessonProgressPromises = modulesSnap.docs
@@ -198,9 +200,7 @@ export default function RegisterForm() {
 
       await Promise.all(lessonProgressPromises);
 
-      console.log('✅ Registro exitoso con logro, notificaciones y cursos.');
-
-      // 7️⃣ Redirigir al dashboard del estudiante
+      // Redirigir al dashboard del estudiante
       router.push(ROUTES.userhome);
     } catch (error: any) {
       console.error('Error en registro:', error);
@@ -372,6 +372,18 @@ export default function RegisterForm() {
         disabled={isLoading}
       />
 
+      {/* Términos y condiciones */}
+      <p className={styles.termsText}>
+        Al registrarte, aceptas nuestros{" "}
+        <button
+          type="button"
+          className={styles.termsLink}
+          onClick={() => setShowTerms(true)}
+        >
+          Términos y Condiciones
+        </button>.
+      </p>
+
       <Button type="submit" variant="primary" fullWidth disabled={isLoading}>
         {isLoading ? 'Creando cuenta...' : 'Crear cuenta'}
       </Button>
@@ -379,6 +391,9 @@ export default function RegisterForm() {
       <p className={styles.login}>
         ¿Ya tienes una cuenta? <Link href={ROUTES.login}>Inicia sesión</Link>
       </p>
+
+      {/* MODAL DE TÉRMINOS Y CONDICIONES */}
+      <TermsModal open={showTerms} onClose={() => setShowTerms(false)} />
     </form>
   );
 }

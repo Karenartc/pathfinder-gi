@@ -8,13 +8,19 @@ export function middleware(request: NextRequest) {
   // Leer cookie
   const authCookie = request.cookies.get("auth")?.value;
 
-  // Si no hay cookie → login
+  // Si no hay cookie y el usuario va hacia zonas públicas → permitir
   if (!authCookie) {
-    if (!url.pathname.startsWith(ROUTES.login) && !url.pathname.startsWith("/register"))
-      return NextResponse.redirect(new URL(ROUTES.login , request.url));
+    const isPublic =
+      url.pathname.startsWith(ROUTES.login) ||
+      url.pathname.startsWith(ROUTES.register) ||
+      url.pathname.startsWith("/main"); // ← permitir main sin cookie post registro
+
+    if (!isPublic) {
+      return NextResponse.redirect(new URL(ROUTES.login, request.url));
+    }
+
     return NextResponse.next();
   }
-
   // Parsear datos
   let auth;
   try {
@@ -26,12 +32,12 @@ export function middleware(request: NextRequest) {
   const role = auth.role;
 
   // 🔥 Redirecciones por rol
-  if (url.pathname.startsWith("/admin") && role === "student") {
+  if (url.pathname.startsWith(ROUTES.admin) && role === "student") {
     return NextResponse.redirect(new URL("/main", request.url));
   }
 
   if (url.pathname.startsWith("/main") && (role === "admin" || role === "tutor")) {
-    return NextResponse.redirect(new URL("/admin", request.url));
+    return NextResponse.redirect(new URL(ROUTES.admin, request.url));
   }
 
   return NextResponse.next();

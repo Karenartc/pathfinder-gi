@@ -5,19 +5,15 @@ import {
   extractTokenFromHeader,
   verifyAuthToken,
 } from "@/libs/firebaseAdminConfig";
-import admin from "firebase-admin";
 
-/* ─────────────────────────────────────────────
-   POST /api/modules/[id]/complete
-   🔒 Protegido por token Firebase
-   Marca lección como completada, actualiza progreso
-   y, si el módulo llega al 100%, crea logro + notificación
-─────────────────────────────────────────────── */
-export async function POST(request: Request, context: any) {
+export async function POST(
+  request: Request,
+  context: { params: Promise<{ id: string }> }
+) {
   try {
-    const moduleId = context?.params?.id as string;
-
+    const { id: moduleId } = await context.params;
     const token = extractTokenFromHeader(request);
+    
     if (!token) {
       return NextResponse.json(
         { ok: false, message: "No token" },
@@ -41,7 +37,7 @@ export async function POST(request: Request, context: any) {
       );
     }
 
-    // 1️⃣ Leer todas las lecciones del módulo
+    // Leer todas las lecciones del módulo
     const lessonsSnap = await adminDb
       .collection("modules")
       .doc(moduleId)
@@ -49,7 +45,7 @@ export async function POST(request: Request, context: any) {
       .get();
     const totalLessons = lessonsSnap.size || 1;
 
-    // 2️⃣ Buscar documento de progreso POR moduleId
+    // Documento de progreso POR moduleId
     const progressRef = adminDb
       .collection("users")
       .doc(uid)
@@ -65,12 +61,13 @@ export async function POST(request: Request, context: any) {
       completedLessons = Array.isArray(data?.completedLessons)
         ? data.completedLessons
         : [];
-      prevProgress =
-        typeof data?.progress === "number" ? data.progress : 0;
+      prevProgress = typeof data?.progress === "number" ? data.progress : 0;
     }
 
-    // 3️⃣ Agregar la lección completada si no existe
-    if (!completedLessons.includes(lessonId)) {
+    const wasAlreadyCompleted = completedLessons.includes(lessonId);
+
+    // Agregar la lección completada si no existe
+    if (!wasAlreadyCompleted) {
       completedLessons.push(lessonId);
     }
 
@@ -79,7 +76,7 @@ export async function POST(request: Request, context: any) {
       100
     );
 
-    // 4️⃣ Guardar progreso unificado
+    // Guardar progreso unificado
     await progressRef.set(
       {
         moduleId,
@@ -90,48 +87,27 @@ export async function POST(request: Request, context: any) {
       { merge: true }
     );
 
-    // 5️⃣ Sumar puntos al usuario (10 pts por lección, igual que antes)
-    const userRef = adminDb.collection("users").doc(uid);
-    await adminDb.runTransaction(async (t) => {
-      const userDoc = await t.get(userRef);
-      if (!userDoc.exists) return;
-      const userData = userDoc.data()!;
-      const currentPoints = userData.totalPoints || 0;
-      const newPoints = currentPoints + 10;
-      t.update(userRef, { totalPoints: newPoints });
-    });
+    // ---------------------------
+    //   SUMAR PUNTOS POR LECCIÓN
+    // ---------------------------
+    if (!wasAlreadyCompleted) {
+      const userRef = adminDb.collection("users").doc(uid);
 
-    // 6️⃣ Si el módulo acaba de llegar al 100% → crear logro + notificación
-    if (progressPercent === 100 && prevProgress < 100) {
-      // Leer info del módulo para el texto
-      const moduleDoc = await adminDb
-        .collection("modules")
-        .doc(moduleId)
-        .get();
-      const moduleData = moduleDoc.data() || {};
-      const moduleTitle =
-        (moduleData as any).name ||
-        (moduleData as any).title ||
-        "Módulo";
+      await adminDb.runTransaction(async (t) => {
+        const userDoc = await t.get(userRef);
+        if (!userDoc.exists) return;
 
-      // 🔹 Achievement en subcolección userAchievements
-      const achievementRef = adminDb
-        .collection("users")
-        .doc(uid)
-        .collection("userAchievements")
-        .doc(); // id auto
+        const userData = userDoc.data()!;
+        const currentPoints = userData.totalPoints || 0;
 
-      await achievementRef.set({
-        id: achievementRef.id,
-        moduleId,
-        name: "Módulo completado",
-        description: `Has completado el módulo "${moduleTitle}".`,
-        iconUrl: "/images/achievements/course-complete.png",
-        pointsAwarded: 0, // solo metadata; no modifica totalPoints
-        awardedAt: new Date().toISOString(),
+        t.update(userRef, {
+          totalPoints: currentPoints + 10, // +10 por lección completada
+        });
       });
 
-      // 🔹 Notificación asociada a ese logro
+      // ---------------------------
+      //   NOTIFICACIÓN LECCIÓN
+      // ---------------------------
       const notifRef = adminDb
         .collection("users")
         .doc(uid)
@@ -140,17 +116,74 @@ export async function POST(request: Request, context: any) {
 
       await notifRef.set({
         id: notifRef.id,
-        type: "achievement",
-        title: "¡Módulo completado!",
-        message: `Ganaste el logro "Módulo completado" por terminar "${moduleTitle}".`,
+        type: "lesson",
+        title: "Lección completada",
+        message: `Has completado una nueva lección del módulo.`,
+        moduleId,
+        lessonId,
         read: false,
         createdAt: new Date().toISOString(),
       });
     }
 
-    console.log(
-      `✅ Usuario ${uid} completó ${lessonId} (${progressPercent}% en ${moduleId})`
-    );
+    // ------------------------------------------------
+    //   LOGRO + NOTIFICACIÓN SI COMPLETÓ EL MÓDULO 100%
+    // ------------------------------------------------
+    if (progressPercent === 100 && prevProgress < 100) {
+      const moduleDoc = await adminDb.collection("modules").doc(moduleId).get();
+      const moduleData = moduleDoc.data() || {};
+      const moduleTitle =
+        (moduleData as any).name ||
+        (moduleData as any).title ||
+        "Módulo";
+
+      // Achievement
+      const achievementRef = adminDb
+        .collection("users")
+        .doc(uid)
+        .collection("userAchievements")
+        .doc();
+
+      await achievementRef.set({
+        id: achievementRef.id,
+        moduleId,
+        name: "Módulo completado",
+        description: `Has completado el módulo "${moduleTitle}".`,
+        iconUrl: "/images/achievements/course-complete.png",
+        pointsAwarded: 30,
+        awardedAt: new Date().toISOString(),
+      });
+
+      // Sumar puntos del achievement (+30)
+      const userRef = adminDb.collection("users").doc(uid);
+
+      await adminDb.runTransaction(async (t) => {
+        const u = await t.get(userRef);
+        if (!u.exists) return;
+
+        const currentPoints = u.data()?.totalPoints || 0;
+        t.update(userRef, {
+          totalPoints: currentPoints + 30,
+        });
+      });
+
+      // Notificación del módulo completado
+      const notifRef2 = adminDb
+        .collection("users")
+        .doc(uid)
+        .collection("notifications")
+        .doc();
+
+      await notifRef2.set({
+        id: notifRef2.id,
+        type: "achievement",
+        title: "¡Módulo completado!",
+        message: `Has finalizado el módulo "${moduleTitle}".`,
+        moduleId,
+        read: false,
+        createdAt: new Date().toISOString(),
+      });
+    }
 
     return NextResponse.json({
       ok: true,
@@ -158,7 +191,7 @@ export async function POST(request: Request, context: any) {
       progress: progressPercent,
     });
   } catch (err: any) {
-    console.error("❌ Error en /api/modules/[id]/complete:", err);
+    console.error("Error en /api/modules/[id]/complete:", err);
     return NextResponse.json(
       {
         ok: false,
