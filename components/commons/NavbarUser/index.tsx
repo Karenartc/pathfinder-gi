@@ -5,11 +5,11 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Image from 'next/image';
 import Link from 'next/link';
-import {Bell, Star, Menu, X, Home, BookOpen, Compass, MessageSquare, } from 'lucide-react';
+import {Bell, Star, Menu, X, Home, BookOpen, Compass, MessageSquare} from 'lucide-react';
 import styles from './NavbarUser.module.css';
 import { ROUTES } from '@/libs/routes';
-import { getUser, getNotifications } from '@/libs/data/mock';
 import NotificationsModal from "@/components/notifications/NotificationsModal";
+import { useNotifications } from '@/hooks/useNotifications';
 
 export default function NavbarUser() {
     const pathname = usePathname();
@@ -17,8 +17,10 @@ export default function NavbarUser() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [notifOpen, setNotifOpen] = useState(false);
-    const [hasUnread, setHasUnread] = useState(false);
 
+    // Usar el hook de notificaciones
+    const { hasUnread, fetchNotifications } = useNotifications();
+    
     // Detectar tamaño de pantalla
     useEffect(() => {
         const checkScreen = () => setIsMobile(window.innerWidth <= 1100);
@@ -28,13 +30,13 @@ export default function NavbarUser() {
     }, []);
 
     // Cargar notificaciones
-    useEffect(() => {
-        async function fetchNotifications() {
-            const data = await getNotifications();
-            setHasUnread(data.some((n) => !n.read));
-        }
-        fetchNotifications();
-    }, []);
+    //useEffect(() => {
+    //    async function fetchNotifications() {
+    //        const data = await getNotifications();
+    //        setHasUnread(data.some((n) => !n.read));
+    //    }
+    //    fetchNotifications();
+    //}, []);
 
 
     const navItems = [
@@ -48,6 +50,13 @@ export default function NavbarUser() {
     const userName = userData?.firstName || userData?.fullName?.split(' ')[0] || 'Usuario';
     const userPoints = userData?.totalPoints || 0;
     const userAvatar = userData?.avatarUrl || '/images/fox-avatar.png';
+
+    // Función para cerrar el modal de notificaciones
+    const handleCloseNotifications = () => {
+        setNotifOpen(false);
+        // Refrescar notificaciones al cerrar para actualizar el estado
+        fetchNotifications();
+    };  
 
     return (
         <header className={styles.nav}>
@@ -84,12 +93,11 @@ export default function NavbarUser() {
 
                 <div className={styles.right}>
                     <button 
-                        className={`${styles.iconBtn} ${hasUnread ? styles.hasUnread : ''}`}
+                        className={`${styles.iconBtn} ${notifOpen ? styles.activeNotif : ''} ${hasUnread ? styles.hasUnread : ''}`}
                         aria-label="Notificaciones" 
                         onClick={() => setNotifOpen(true)}
                     >
                         <Bell size={20} />
-                        {hasUnread && <span className={styles.bellDot}></span>}
                     </button>
 
                 <div className={styles.divider}></div>
@@ -182,8 +190,7 @@ export default function NavbarUser() {
         )}
         <NotificationsModal
             open={notifOpen}
-            onClose={() => setNotifOpen(false)}
-            onUpdateUnread={(hasUnread) => setHasUnread(hasUnread)}
+            onClose={handleCloseNotifications}
         />
         </header>
     );

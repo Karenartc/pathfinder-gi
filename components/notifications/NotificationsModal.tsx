@@ -1,47 +1,50 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import styles from "./notifications.module.css";
-import { getNotifications } from "@/libs/data";
-import type { Notification } from "@/libs/types";
 import NotificationItem from "./NotificationItem";
 import { X } from "lucide-react";
+import { useNotifications } from "@/hooks/useNotifications";
 
 type Props = {
   open: boolean;
   onClose: () => void;
-  onUpdateUnread: (hasUnread: boolean) => void;
 };
 
-export default function NotificationsModal({ open, onClose, onUpdateUnread }: Props) {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+export default function NotificationsModal({ open, onClose }: Props) {
+  const { 
+    notifications, 
+    loading, 
+    markAsRead, 
+    markAllAsRead 
+  } = useNotifications();
 
+  // Filtrar solo las no leídas y limitar a 5
+  const unreadNotifications = notifications
+    .filter((n) => !n.read)
+    .sort((a, b) => (a.dateISO < b.dateISO ? 1 : -1))
+    .slice(0, 5);
+
+  // Marcar todas como leídas al abrir el modal (opcional)
   useEffect(() => {
-    if (open) {
-      getNotifications().then((data) => {
-        const unreadOnly = data.filter((n) => !n.read);
-        const sorted = unreadOnly.sort((a, b) =>
-          a.dateISO < b.dateISO ? 1 : -1
-        );
-        const limited = sorted.slice(0, 5);
-        setNotifications(limited);
-      });
+    if (open && unreadNotifications.length > 0) {
+      // Esperar 2 segundos antes de marcar como leídas (dar tiempo para que el usuario las vea)
+      const timer = setTimeout(() => {
+        markAllAsRead();
+      }, 2000);
+
+      return () => clearTimeout(timer);
     }
-  }, [open]);
+  }, [open, unreadNotifications.length]);
 
-  useEffect(() => {
-    onUpdateUnread(notifications.some((n) => !n.read));
-  }, [notifications, onUpdateUnread]);
+  const handleNotificationClick = async (id: string, link?: string | null) => {
+    // Marcar como leída
+    await markAsRead(id);
 
-
-  const handleMarkAsRead = (id: string, link?: string) => {
-    setNotifications((prev) => {
-      const updated = prev.filter((n) => n.id !== id); 
-      onUpdateUnread(updated.some((n) => !n.read));
-      return updated;
-    });
-
-    if (link) window.open(link, "_blank");
+    // Si tiene link, abrirlo
+    if (link) {
+      window.open(link, "_blank");
+    }
   };
 
   if (!open) return null;
@@ -60,12 +63,14 @@ export default function NotificationsModal({ open, onClose, onUpdateUnread }: Pr
         </header>
 
         <section className={styles.list}>
-          {notifications.length > 0 ? (
-            notifications.map((n) => (
+          {loading ? (
+            <p className={styles.empty}>Cargando notificaciones...</p>
+          ) : unreadNotifications.length > 0 ? (
+            unreadNotifications.map((n) => (
               <NotificationItem
                 key={n.id}
                 notification={n}
-                onClick={() => handleMarkAsRead(n.id,  n.link)}
+                onClick={() => handleNotificationClick(n.id, n.link)}
               />
             ))
           ) : (
