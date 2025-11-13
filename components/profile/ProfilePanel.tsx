@@ -16,6 +16,7 @@ export default function ProfilePanel({ user }: { user: User }) {
     const router = useRouter();
 
     const handleLogout = () => {
+        document.cookie = "auth=; path=/; max-age=0;";
         localStorage.removeItem("authToken");
         router.push(ROUTES.home);
     };

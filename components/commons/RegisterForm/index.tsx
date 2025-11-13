@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '@/libs/firebaseConfig';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
@@ -19,6 +19,9 @@ const VALID_CAREERS = [
     "Ingeniería Automatización",
     "Administración de Empresas",
 ];
+
+// Cursos iniciales
+const INITIAL_COURSES = ["m1", "m2", "m3", "m4", "m5"];
 
 export default function RegisterForm() {
     const router = useRouter();
@@ -36,19 +39,17 @@ export default function RegisterForm() {
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
-    const [isLoading, setIsLoading] = useState(false); // Estado de carga para deshabilitar el formulario
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-        ) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setErrors({}); // Limpiar errores previos antes de validar nuevamente
+        setErrors({});
 
-        //Validaciones
+        // Validación
         const newErrors: Record<string, string> = {};
         if (!form.firstName) newErrors.firstName = 'Campo requerido';
         if (!form.lastName) newErrors.lastName = 'Campo requerido';
@@ -66,29 +67,26 @@ export default function RegisterForm() {
             return;
         }
 
-        // Lamada al BACKEND
-
-        setIsLoading(true); // Activar estado de carga
+        setIsLoading(true);
 
         try {
-            // Crear usuario en Firebase Auth
+            // 🔥 Crear usuario en Firebase Auth
             const userCredential = await createUserWithEmailAndPassword(
                 auth,
                 form.email,
                 form.password
             );
-
             const user = userCredential.user;
 
-            // Crear documento en Firestore
             const fullName = `${form.firstName} ${form.lastName}`;
-            
+
+            // 🔥 Crear documento principal en Firestore
             await setDoc(doc(db, "users", user.uid), {
                 uid: user.uid,
                 email: form.email,
                 firstName: form.firstName,
                 lastName: form.lastName,
-                fullName: fullName,
+                fullName,
                 rut: form.rut,
                 phone: form.phone,
                 birthDate: form.birthDate,
@@ -100,39 +98,80 @@ export default function RegisterForm() {
                     darkMode: false,
                     notificationsEnabled: true,
                 },
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp(),
             });
 
-            console.log("Registro exitoso");
-            
-            // Redirigir al dashboard
+            // 🔥 Asignar cursos base con progreso 0
+            for (const moduleId of INITIAL_COURSES) {
+                await setDoc(
+                    doc(db, "users", user.uid, "lessonProgress", moduleId),
+                    {
+                        moduleId,
+                        completedLessons: [],
+                        progress: 0,
+                        updatedAt: serverTimestamp(),
+                    }
+                );
+            }
+
+            // 🔥 Dar Achievement inicial "Comenzar la Aventura"
+            await setDoc(
+                doc(db, "users", user.uid, "userAchievements", "a1"),
+                {
+                    id: "a1",
+                    name: "Comenzar la Aventura",
+                    description: "Ingresaste por primera vez a PathFinder GI.",
+                    iconUrl: "/images/achievements/start.png",
+                    pointsAwarded: 10,
+                    awardedAt: serverTimestamp(),
+                }
+            );
+
+            await setDoc(
+                doc(db, "users", user.uid),
+                {
+                    totalPoints: 10 // inicia con 10 puntos por el primer achievement
+                },
+                { merge: true }
+            );
+
+            // 🔥 Obtener token para la cookie del middleware
+            const token = await user.getIdToken(true);
+
+            // Guardar cookie auth
+            document.cookie = `auth=${JSON.stringify({
+                token,
+                role: "student"
+            })}; path=/; max-age=3600; Secure; SameSite=Lax`;
+
+            // 🔥 Redirigir al dashboard
             router.push(ROUTES.userhome);
-            
+
         } catch (error: any) {
             console.error("Error en registro:", error);
-            
+
             let errorMessage = "Error al registrarse";
-            
+
             if (error.code === "auth/email-already-in-use") {
                 errorMessage = "Este email ya está registrado";
             } else if (error.code === "auth/weak-password") {
                 errorMessage = "La contraseña debe tener al menos 6 caracteres";
             } else if (error.code === "auth/invalid-email") {
                 errorMessage = "Email inválido";
-            } else if (error.code?.includes('permission-denied')) {
-                errorMessage = "Error de permisos. Contacta al administrador";
             }
-            
+
             setErrors({ general: errorMessage });
+
         } finally {
             setIsLoading(false);
         }
     };
-    // Cierre del BACKEND
 
     return (
         <form onSubmit={handleSubmit} className={styles.form}>
+            {/* mensajes y campos sin cambios */}
+
             {errors.general && (
                 <div className={styles.errorMessage}>
                     {errors.general}

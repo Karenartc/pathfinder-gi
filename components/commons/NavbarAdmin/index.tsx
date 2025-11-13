@@ -5,12 +5,17 @@ import styles from "./NavbarAdmin.module.css";
 import { LogOut, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext"; 
 
 export default function NavbarAdmin() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const { userData } = useAuth();       
 
   const handleLogout = () => {
+    // borrar cookie de auth (IMPORTANTE)
+    document.cookie = "auth=; path=/; max-age=0;";
+    localStorage.clear();
     router.push("/");
   };
 
@@ -32,13 +37,19 @@ export default function NavbarAdmin() {
         {/* Perfil */}
         <div className={styles.profile} onClick={() => setOpen(!open)}>
           <Image
-            src="/icons/PathFox-logo-512x512.png"
+            src={userData?.avatarUrl || "/icons/PathFox-logo-512x512.png"}
             alt="Admin"
             width={36}
             height={36}
             className={styles.avatar}
           />
-          <span className={styles.username}>Administrador</span>
+
+          <span className={styles.username}>
+            {userData?.fullName ||
+             userData?.firstName ||
+             "Admin"}
+          </span>
+
           <ChevronDown size={16} />
         </div>
 

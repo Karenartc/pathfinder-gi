@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/libs/firebaseConfig';
+import { auth, db } from '@/libs/firebaseConfig';
+import { doc, getDoc } from "firebase/firestore";
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { ROUTES } from '@/libs/routes';
@@ -12,17 +13,17 @@ import { Eye, EyeOff } from 'lucide-react';
 import styles from './LoginForm.module.css';
 
 export default function LoginForm() {
-    const router = useRouter(); // Hook para navegación
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
-    const [isLoading, setIsLoading] = useState(false); // Estado de carga para deshabilitar el formulario
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async(e: React.FormEvent) => {
         e.preventDefault();
 
-        setErrors({}); // Limpiar errores previos antes de validar nuevamente
+        setErrors({});
 
         const newErrors: typeof errors = {};
         if (!email) newErrors.email = 'Campo requerido';
@@ -35,22 +36,34 @@ export default function LoginForm() {
             return;
         }
 
-        // Lamada al BACKEND
-
-        setIsLoading(true); // Activar estado de carga
+        setIsLoading(true);
 
         try {
-            // Hacer petición POST al endpoint de login
-            await signInWithEmailAndPassword(auth, email, password);
+            // Login con Firebase
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
 
-            // Login exitoso - Guardar datos en localStorage
-            console.log('Login exitoso:');
+            // Obtener token JWT
+            const token = await user.getIdToken(true);
 
-            // Redirigir al home de usuario luego de iniciar sesión
-            router.push(ROUTES.userhome); 
-            
+            // OBTENER EL ROLE DESDE FIRESTORE
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            const userRole = userDoc.exists() ? userDoc.data()?.role : "student";
+
+            // GUARDAR TOKEN + ROLE EN COOKIE PARA EL MIDDLEWARE
+            document.cookie = `auth=${JSON.stringify({
+                token,
+                role: userRole
+            })}; path=/; max-age=3600; Secure; SameSite=Lax`;
+
+            // REDIRECCIÓN SEGÚN ROLE
+            if (userRole === "admin" || userRole === "tutor") {
+                router.push(ROUTES.admin);
+            } else {
+                router.push(ROUTES.userhome);
+            }
+
         } catch (error: any) {
-            // Manejar errores de conexión
             console.error('Error en login:', error);
 
             let errorMessage = 'Error al iniciar sesión.';
@@ -84,7 +97,6 @@ export default function LoginForm() {
         } finally {
             setIsLoading(false);
         }
-        // FIN DE LLAMADA AL BACKEND
     };
 
     return (
@@ -94,6 +106,7 @@ export default function LoginForm() {
                     {errors.general}
                 </div>
             )}    
+
             <Input
                 type="email"
                 placeholder="Correo electrónico"
@@ -102,7 +115,7 @@ export default function LoginForm() {
                 error={errors.email}
                 fullWidth
                 required
-                disabled={isLoading} // Deshabilitar durante la carga
+                disabled={isLoading}
             />
 
             <Input
@@ -112,24 +125,24 @@ export default function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 error={errors.password}
                 rightAction={
-                <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className={styles.iconButton}
-                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                    disabled={isLoading} // Deshabilitar durante la carga
-                >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className={styles.iconButton}
+                        aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                        disabled={isLoading}
+                    >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
                 }
                 fullWidth
                 required
-                disabled={isLoading} // Deshabilitar durante la carga
+                disabled={isLoading}
             />
 
             <div className={styles.actions}>
                 <a href="#" className={styles.forgot}>
-                ¿Olvidaste tu contraseña?
+                    ¿Olvidaste tu contraseña?
                 </a>
             </div>
 
