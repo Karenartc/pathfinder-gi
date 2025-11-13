@@ -125,15 +125,20 @@
 
 /* Descripción breve */
 .desc {
+    font-size: var(--fs-body-s);
     color: rgb(var(--color-on-surface-variant));
-    font-size: var(--fs-body);
-    line-height: var(--lh-base);
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-2);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;      /* número de líneas */
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    line-clamp: 2; 
 }
 
 /* ---------- METADATOS ---------- */
 .meta {
-  list-style: none;
+    list-style: none;
     padding: 0;
     margin: 0;
     display: grid;

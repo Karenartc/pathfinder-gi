@@ -50,7 +50,7 @@ export default function ExploreSection({ places }: Props) {
             >
                 <div className={styles.media}>
                 <Image
-                    src={place.image}
+                    src={place.image || "/images/biblioteca-lugar.jpeg"}
                     alt={place.name}
                     width={600}
                     height={180}
