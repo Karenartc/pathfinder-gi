@@ -6,8 +6,6 @@
 
 [Ver la app en vivo](https://pathfinder-gi.vercel.app/)
 
-![Captura de pantalla principal](public\images\mainPage-screenshot.png)
-
 ## Características principales 🚀
 
 - **Dashboard académico** personal con tu progreso de cursos y eventos.
